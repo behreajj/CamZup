@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.behreajj.camzup.core"},{"l":"com.behreajj.camzup.friendly"}];updateSearchResults();

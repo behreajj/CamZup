@@ -1,0 +1,821 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" shape-rendering="geometricPrecision" width="720" height="405" viewBox="0 0 720 405">
+<path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill="#101010" />
+<g transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
+<g id="1f89ab83" class="meshentity2" transform="translate(0.0, 0.0) rotate(0.0) scale(27.939340, 27.939340)">
+<g id="0xff440154" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#440154">
+<path id="grid.hexagon.000" class="mesh2" fill-rule="evenodd" d="M -7.794228 0.450000 L -8.183939 0.225000 L -8.183939 -0.225000 L -7.794228 -0.450000 L -7.404517 -0.225000 L -7.404517 0.225000 Z " />
+</g>
+<g id="0xff440255" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#440255">
+<path id="grid.hexagon.001" class="mesh2" fill-rule="evenodd" d="M -7.361216 1.200000 L -7.750927 0.975000 L -7.750927 0.525000 L -7.361216 0.300000 L -6.971504 0.525000 L -6.971504 0.975000 Z " />
+</g>
+<g id="0xff450457" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#450457">
+<path id="grid.hexagon.002" class="mesh2" fill-rule="evenodd" d="M -6.976917 1.528125 L -7.132801 1.798125 L -7.288686 1.708125 L -7.288686 1.528125 Z M -6.976916 1.471874 L -7.288686 1.471874 L -7.288686 1.291875 L -7.132801 1.201874 Z M -6.928203 1.443750 L -7.084087 1.173749 L -6.928203 1.083750 L -6.772318 1.173749 Z M -6.879489 1.471874 L -6.723604 1.201874 L -6.567719 1.291875 L -6.567719 1.471874 Z M -6.879488 1.528125 L -6.567719 1.528125 L -6.567719 1.708125 L -6.723604 1.798125 Z M -6.928203 1.556250 L -6.772318 1.826250 L -6.928203 1.916250 L -7.084087 1.826250 Z " />
+</g>
+<g id="0xff450558" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#450558">
+<path id="grid.hexagon.003" class="mesh2" fill-rule="evenodd" d="M -6.495190 2.700000 L -6.884902 2.474999 L -6.884902 2.025000 L -6.495190 1.799999 L -6.105479 2.025000 L -6.105479 2.474999 Z " />
+</g>
+<g id="0xff450759" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#450759">
+<path id="grid.hexagon.004" class="mesh2" fill-rule="evenodd" d="M -6.062177 3.450000 L -6.451889 3.224999 L -6.451889 2.775000 L -6.062177 2.549999 L -5.672466 2.775000 L -5.672466 3.224999 Z " />
+</g>
+<g id="0xff45085a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#45085a">
+<path id="grid.hexagon.005" class="mesh2" fill-rule="evenodd" d="M -5.677879 3.778125 L -5.833763 4.048124 L -5.989648 3.958124 L -5.989648 3.778125 Z M -5.677878 3.721874 L -5.989648 3.721874 L -5.989648 3.541875 L -5.833763 3.451874 Z M -5.629165 3.693749 L -5.785049 3.423749 L -5.629165 3.333750 L -5.473280 3.423749 Z M -5.580451 3.721874 L -5.424566 3.451874 L -5.268682 3.541875 L -5.268682 3.721874 Z M -5.580451 3.778125 L -5.268682 3.778125 L -5.268682 3.958124 L -5.424566 4.048124 Z M -5.629165 3.806250 L -5.473280 4.076249 L -5.629165 4.166249 L -5.785049 4.076249 Z " />
+</g>
+<g id="0xff460a5c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#460a5c">
+<path id="grid.hexagon.006" class="mesh2" fill-rule="evenodd" d="M -5.196152 4.949999 L -5.585864 4.724999 L -5.585864 4.275000 L -5.196152 4.050000 L -4.806441 4.275000 L -4.806441 4.724999 Z " />
+</g>
+<g id="0xff460b5d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#460b5d">
+<path id="grid.hexagon.007" class="mesh2" fill-rule="evenodd" d="M -4.763139 5.699999 L -5.152851 5.474999 L -5.152851 5.025000 L -4.763139 4.800000 L -4.373428 5.025000 L -4.373428 5.474999 Z " />
+</g>
+<g id="0xff460d5e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#460d5e">
+<path id="grid.hexagon.008" class="mesh2" fill-rule="evenodd" d="M -4.378840 6.028124 L -4.534725 6.298124 L -4.690609 6.208125 L -4.690609 6.028124 Z M -4.378840 5.971875 L -4.690609 5.971875 L -4.690609 5.791874 L -4.534725 5.701875 Z M -4.330126 5.943749 L -4.486011 5.673750 L -4.330126 5.583750 L -4.174242 5.673750 Z M -4.281413 5.971875 L -4.125528 5.701875 L -3.969643 5.791874 L -3.969643 5.971875 Z M -4.281413 6.028124 L -3.969643 6.028124 L -3.969643 6.208125 L -4.125528 6.298124 Z M -4.330126 6.056250 L -4.174242 6.326249 L -4.330126 6.416249 L -4.486011 6.326249 Z " />
+</g>
+<g id="0xff460e60" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#460e60">
+<path id="grid.hexagon.009" class="mesh2" fill-rule="evenodd" d="M -3.897114 7.199999 L -4.286825 6.974999 L -4.286825 6.525000 L -3.897114 6.300000 L -3.507402 6.525000 L -3.507402 6.974999 Z " />
+</g>
+<g id="0xff471061" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#471061">
+<path id="grid.hexagon.010" class="mesh2" fill-rule="evenodd" d="M -7.361215 -0.300000 L -7.750926 -0.525000 L -7.750926 -0.975000 L -7.361215 -1.200000 L -6.971504 -0.975000 L -6.971504 -0.525000 Z " />
+</g>
+<g id="0xff471162" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#471162">
+<path id="grid.hexagon.011" class="mesh2" fill-rule="evenodd" d="M -6.976917 0.028124 L -7.132801 0.298124 L -7.288686 0.208124 L -7.288686 0.028124 Z M -6.976916 -0.028124 L -7.288686 -0.028124 L -7.288686 -0.208124 L -7.132801 -0.298124 Z M -6.928203 -0.056249 L -7.084087 -0.326249 L -6.928203 -0.416249 L -6.772318 -0.326249 Z M -6.879489 -0.028124 L -6.723604 -0.298124 L -6.567719 -0.208124 L -6.567719 -0.028124 Z M -6.879488 0.028124 L -6.567719 0.028124 L -6.567719 0.208124 L -6.723604 0.298124 Z M -6.928203 0.056249 L -6.772318 0.326249 L -6.928203 0.416249 L -7.084087 0.326249 Z " />
+</g>
+<g id="0xff471263" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#471263">
+<path id="grid.hexagon.012" class="mesh2" fill-rule="evenodd" d="M -6.495190 1.200000 L -6.884902 0.975000 L -6.884902 0.525000 L -6.495190 0.300000 L -6.105479 0.525000 L -6.105479 0.975000 Z " />
+</g>
+<g id="0xff471465" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#471465">
+<path id="grid.hexagon.013" class="mesh2" fill-rule="evenodd" d="M -6.062177 1.950000 L -6.451889 1.725000 L -6.451889 1.274999 L -6.062177 1.049999 L -5.672466 1.274999 L -5.672466 1.725000 Z " />
+</g>
+<g id="0xff471566" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#471566">
+<path id="grid.hexagon.014" class="mesh2" fill-rule="evenodd" d="M -5.677879 2.278125 L -5.833763 2.548125 L -5.989648 2.458124 L -5.989648 2.278125 Z M -5.677878 2.221874 L -5.989648 2.221874 L -5.989648 2.041875 L -5.833763 1.951874 Z M -5.629165 2.193749 L -5.785049 1.923750 L -5.629165 1.833749 L -5.473280 1.923750 Z M -5.580451 2.221874 L -5.424566 1.951874 L -5.268682 2.041875 L -5.268682 2.221874 Z M -5.580451 2.278125 L -5.268682 2.278125 L -5.268682 2.458124 L -5.424566 2.548125 Z M -5.629165 2.306250 L -5.473280 2.576250 L -5.629165 2.666249 L -5.785049 2.576250 Z " />
+</g>
+<g id="0xff481667" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481667">
+<path id="grid.hexagon.015" class="mesh2" fill-rule="evenodd" d="M -5.196152 3.450000 L -5.585863 3.224999 L -5.585863 2.775000 L -5.196152 2.549999 L -4.806440 2.775000 L -4.806440 3.224999 Z " />
+</g>
+<g id="0xff481769" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481769">
+<path id="grid.hexagon.016" class="mesh2" fill-rule="evenodd" d="M -4.763139 4.199999 L -5.152851 3.974999 L -5.152851 3.525000 L -4.763139 3.299999 L -4.373428 3.525000 L -4.373428 3.974999 Z " />
+</g>
+<g id="0xff48186a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#48186a">
+<path id="grid.hexagon.017" class="mesh2" fill-rule="evenodd" d="M -4.378840 4.528124 L -4.534725 4.798124 L -4.690609 4.708125 L -4.690609 4.528124 Z M -4.378840 4.471875 L -4.690609 4.471875 L -4.690609 4.291874 L -4.534725 4.201875 Z M -4.330126 4.443749 L -4.486011 4.173750 L -4.330126 4.083750 L -4.174242 4.173750 Z M -4.281413 4.471875 L -4.125528 4.201875 L -3.969643 4.291874 L -3.969643 4.471875 Z M -4.281413 4.528124 L -3.969643 4.528124 L -3.969643 4.708125 L -4.125528 4.798124 Z M -4.330126 4.556250 L -4.174242 4.826249 L -4.330126 4.916249 L -4.486011 4.826249 Z " />
+</g>
+<g id="0xff481a6b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481a6b">
+<path id="grid.hexagon.018" class="mesh2" fill-rule="evenodd" d="M -3.897114 5.699999 L -4.286825 5.474999 L -4.286825 5.025000 L -3.897114 4.800000 L -3.507402 5.025000 L -3.507402 5.474999 Z " />
+</g>
+<g id="0xff481b6c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481b6c">
+<path id="grid.hexagon.019" class="mesh2" fill-rule="evenodd" d="M -3.464101 6.449999 L -3.853812 6.224999 L -3.853812 5.775000 L -3.464101 5.550000 L -3.074390 5.775000 L -3.074390 6.224999 Z " />
+</g>
+<g id="0xff481c6d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481c6d">
+<path id="grid.hexagon.020" class="mesh2" fill-rule="evenodd" d="M -3.079802 6.778124 L -3.235687 7.048124 L -3.391571 6.958125 L -3.391571 6.778124 Z M -3.079802 6.721875 L -3.391571 6.721875 L -3.391571 6.541874 L -3.235687 6.451875 Z M -3.031088 6.693749 L -3.186973 6.423750 L -3.031088 6.333750 L -2.875204 6.423750 Z M -2.982374 6.721875 L -2.826490 6.451875 L -2.670605 6.541874 L -2.670605 6.721875 Z M -2.982374 6.778124 L -2.670605 6.778124 L -2.670605 6.958125 L -2.826490 7.048124 Z M -3.031088 6.806250 L -2.875204 7.076249 L -3.031088 7.166249 L -3.186973 7.076249 Z " />
+</g>
+<g id="0xff481d6e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481d6e">
+<path id="grid.hexagon.021" class="mesh2" fill-rule="evenodd" d="M -6.928203 -1.049999 L -7.317914 -1.274999 L -7.317914 -1.725000 L -6.928203 -1.950000 L -6.538491 -1.725000 L -6.538491 -1.274999 Z " />
+</g>
+<g id="0xff481f6f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#481f6f">
+<path id="grid.hexagon.022" class="mesh2" fill-rule="evenodd" d="M -6.495190 -0.300000 L -6.884901 -0.525000 L -6.884901 -0.975000 L -6.495190 -1.200000 L -6.105478 -0.975000 L -6.105478 -0.525000 Z " />
+</g>
+<g id="0xff482070" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482070">
+<path id="grid.hexagon.023" class="mesh2" fill-rule="evenodd" d="M -6.110891 0.028124 L -6.266776 0.298124 L -6.422660 0.208124 L -6.422660 0.028124 Z M -6.110891 -0.028124 L -6.422660 -0.028124 L -6.422660 -0.208124 L -6.266776 -0.298124 Z M -6.062177 -0.056249 L -6.218062 -0.326249 L -6.062177 -0.416249 L -5.906292 -0.326249 Z M -6.013463 -0.028124 L -5.857579 -0.298124 L -5.701694 -0.208124 L -5.701694 -0.028124 Z M -6.013463 0.028124 L -5.701694 0.028124 L -5.701694 0.208124 L -5.857579 0.298124 Z M -6.062177 0.056249 L -5.906292 0.326249 L -6.062177 0.416249 L -6.218062 0.326249 Z " />
+</g>
+<g id="0xff482171" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482171">
+<path id="grid.hexagon.024" class="mesh2" fill-rule="evenodd" d="M -5.629165 1.200000 L -6.018876 0.975000 L -6.018876 0.525000 L -5.629165 0.300000 L -5.239453 0.525000 L -5.239453 0.975000 Z " />
+</g>
+<g id="0xff482272" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482272">
+<path id="grid.hexagon.025" class="mesh2" fill-rule="evenodd" d="M -5.196152 1.950000 L -5.585863 1.725000 L -5.585863 1.274999 L -5.196152 1.049999 L -4.806440 1.274999 L -4.806440 1.725000 Z " />
+</g>
+<g id="0xff482473" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482473">
+<path id="grid.hexagon.026" class="mesh2" fill-rule="evenodd" d="M -4.811853 2.278125 L -4.967738 2.548125 L -5.123622 2.458124 L -5.123622 2.278125 Z M -4.811853 2.221874 L -5.123622 2.221874 L -5.123622 2.041875 L -4.967738 1.951874 Z M -4.763139 2.193749 L -4.919024 1.923750 L -4.763139 1.833749 L -4.607254 1.923750 Z M -4.714426 2.221874 L -4.558541 1.951874 L -4.402656 2.041875 L -4.402656 2.221874 Z M -4.714426 2.278125 L -4.402656 2.278125 L -4.402656 2.458124 L -4.558541 2.548125 Z M -4.763139 2.306250 L -4.607254 2.576250 L -4.763139 2.666249 L -4.919024 2.576250 Z " />
+</g>
+<g id="0xff482574" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482574">
+<path id="grid.hexagon.027" class="mesh2" fill-rule="evenodd" d="M -4.330126 3.450000 L -4.719838 3.224999 L -4.719838 2.775000 L -4.330126 2.549999 L -3.940415 2.775000 L -3.940415 3.224999 Z " />
+</g>
+<g id="0xff482675" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482675">
+<path id="grid.hexagon.028" class="mesh2" fill-rule="evenodd" d="M -3.897114 4.199999 L -4.286825 3.974999 L -4.286825 3.525000 L -3.897114 3.299999 L -3.507402 3.525000 L -3.507402 3.974999 Z " />
+</g>
+<g id="0xff482776" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#482776">
+<path id="grid.hexagon.029" class="mesh2" fill-rule="evenodd" d="M -3.512815 4.528124 L -3.668699 4.798124 L -3.824584 4.708125 L -3.824584 4.528124 Z M -3.512815 4.471875 L -3.824584 4.471875 L -3.824584 4.291874 L -3.668699 4.201875 Z M -3.464101 4.443749 L -3.619986 4.173750 L -3.464101 4.083750 L -3.308217 4.173750 Z M -3.415387 4.471875 L -3.259503 4.201875 L -3.103618 4.291874 L -3.103618 4.471875 Z M -3.415387 4.528124 L -3.103618 4.528124 L -3.103618 4.708125 L -3.259503 4.798124 Z M -3.464101 4.556250 L -3.308217 4.826249 L -3.464101 4.916249 L -3.619986 4.826249 Z " />
+</g>
+<g id="0xff472877" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472877">
+<path id="grid.hexagon.030" class="mesh2" fill-rule="evenodd" d="M -3.031088 5.699999 L -3.420800 5.474999 L -3.420800 5.025000 L -3.031088 4.800000 L -2.641377 5.025000 L -2.641377 5.474999 Z " />
+</g>
+<g id="0xff472978" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472978">
+<path id="grid.hexagon.031" class="mesh2" fill-rule="evenodd" d="M -2.598076 6.449999 L -2.987787 6.224999 L -2.987787 5.775000 L -2.598076 5.550000 L -2.208364 5.775000 L -2.208364 6.224999 Z " />
+</g>
+<g id="0xff472b79" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472b79">
+<path id="grid.hexagon.032" class="mesh2" fill-rule="evenodd" d="M -2.213777 6.778124 L -2.369661 7.048124 L -2.525546 6.958125 L -2.525546 6.778124 Z M -2.213777 6.721875 L -2.525546 6.721875 L -2.525546 6.541874 L -2.369661 6.451875 Z M -2.165063 6.693749 L -2.320947 6.423750 L -2.165063 6.333750 L -2.009178 6.423750 Z M -2.116349 6.721875 L -1.960464 6.451875 L -1.804580 6.541874 L -1.804580 6.721875 Z M -2.116349 6.778124 L -1.804580 6.778124 L -1.804580 6.958125 L -1.960464 7.048124 Z M -2.165063 6.806250 L -2.009178 7.076249 L -2.165063 7.166249 L -2.320947 7.076249 Z " />
+</g>
+<g id="0xff472c79" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472c79">
+<path id="grid.hexagon.033" class="mesh2" fill-rule="evenodd" d="M -6.495190 -1.799999 L -6.884901 -2.025000 L -6.884901 -2.474999 L -6.495190 -2.700000 L -6.105478 -2.474999 L -6.105478 -2.025000 Z " />
+</g>
+<g id="0xff472d7a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472d7a">
+<path id="grid.hexagon.034" class="mesh2" fill-rule="evenodd" d="M -6.062177 -1.049999 L -6.451889 -1.274999 L -6.451889 -1.725000 L -6.062177 -1.950000 L -5.672466 -1.725000 L -5.672466 -1.274999 Z " />
+</g>
+<g id="0xff472e7b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#472e7b">
+<path id="grid.hexagon.035" class="mesh2" fill-rule="evenodd" d="M -5.677878 -0.721875 L -5.833763 -0.451874 L -5.989647 -0.541874 L -5.989647 -0.721875 Z M -5.677878 -0.778125 L -5.989647 -0.778125 L -5.989647 -0.958125 L -5.833763 -1.048125 Z M -5.629164 -0.806250 L -5.785049 -1.076250 L -5.629164 -1.166249 L -5.473279 -1.076250 Z M -5.580451 -0.778125 L -5.424566 -1.048125 L -5.268681 -0.958125 L -5.268681 -0.778125 Z M -5.580450 -0.721875 L -5.268681 -0.721875 L -5.268681 -0.541874 L -5.424566 -0.451874 Z M -5.629164 -0.693750 L -5.473279 -0.423750 L -5.629164 -0.333750 L -5.785049 -0.423750 Z " />
+</g>
+<g id="0xff462f7c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#462f7c">
+<path id="grid.hexagon.036" class="mesh2" fill-rule="evenodd" d="M -5.196152 0.450000 L -5.585863 0.225000 L -5.585863 -0.225000 L -5.196152 -0.450000 L -4.806440 -0.225000 L -4.806440 0.225000 Z " />
+</g>
+<g id="0xff46307d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#46307d">
+<path id="grid.hexagon.037" class="mesh2" fill-rule="evenodd" d="M -4.763139 1.200000 L -5.152851 0.975000 L -5.152851 0.525000 L -4.763139 0.300000 L -4.373428 0.525000 L -4.373428 0.975000 Z " />
+</g>
+<g id="0xff46317d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#46317d">
+<path id="grid.hexagon.038" class="mesh2" fill-rule="evenodd" d="M -4.378840 1.528125 L -4.534725 1.798125 L -4.690609 1.708125 L -4.690609 1.528125 Z M -4.378840 1.471874 L -4.690609 1.471874 L -4.690609 1.291875 L -4.534725 1.201874 Z M -4.330126 1.443750 L -4.486011 1.173749 L -4.330126 1.083750 L -4.174242 1.173749 Z M -4.281413 1.471874 L -4.125528 1.201874 L -3.969643 1.291875 L -3.969643 1.471874 Z M -4.281413 1.528125 L -3.969643 1.528125 L -3.969643 1.708125 L -4.125528 1.798125 Z M -4.330126 1.556250 L -4.174242 1.826250 L -4.330126 1.916250 L -4.486011 1.826250 Z " />
+</g>
+<g id="0xff46337e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#46337e">
+<path id="grid.hexagon.039" class="mesh2" fill-rule="evenodd" d="M -3.897114 2.700000 L -4.286825 2.474999 L -4.286825 2.025000 L -3.897114 1.799999 L -3.507402 2.025000 L -3.507402 2.474999 Z " />
+</g>
+<g id="0xff46347f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#46347f">
+<path id="grid.hexagon.040" class="mesh2" fill-rule="evenodd" d="M -3.464101 3.450000 L -3.853812 3.224999 L -3.853812 2.775000 L -3.464101 2.549999 L -3.074389 2.775000 L -3.074389 3.224999 Z " />
+</g>
+<g id="0xff45357f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#45357f">
+<path id="grid.hexagon.041" class="mesh2" fill-rule="evenodd" d="M -3.079802 3.778125 L -3.235687 4.048124 L -3.391571 3.958124 L -3.391571 3.778125 Z M -3.079802 3.721874 L -3.391571 3.721874 L -3.391571 3.541875 L -3.235687 3.451874 Z M -3.031088 3.693749 L -3.186973 3.423749 L -3.031088 3.333750 L -2.875204 3.423749 Z M -2.982374 3.721874 L -2.826490 3.451874 L -2.670605 3.541875 L -2.670605 3.721874 Z M -2.982374 3.778125 L -2.670605 3.778125 L -2.670605 3.958124 L -2.826490 4.048124 Z M -3.031088 3.806250 L -2.875204 4.076249 L -3.031088 4.166249 L -3.186973 4.076249 Z " />
+</g>
+<g id="0xff453680" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#453680">
+<path id="grid.hexagon.042" class="mesh2" fill-rule="evenodd" d="M -2.598076 4.949999 L -2.987787 4.724999 L -2.987787 4.275000 L -2.598076 4.050000 L -2.208364 4.275000 L -2.208364 4.724999 Z " />
+</g>
+<g id="0xff453780" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#453780">
+<path id="grid.hexagon.043" class="mesh2" fill-rule="evenodd" d="M -2.165063 5.699999 L -2.554774 5.474999 L -2.554774 5.025000 L -2.165063 4.800000 L -1.775352 5.025000 L -1.775352 5.474999 Z " />
+</g>
+<g id="0xff453881" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#453881">
+<path id="grid.hexagon.044" class="mesh2" fill-rule="evenodd" d="M -1.780764 6.028124 L -1.936649 6.298124 L -2.092533 6.208125 L -2.092533 6.028124 Z M -1.780764 5.971875 L -2.092533 5.971875 L -2.092533 5.791874 L -1.936649 5.701875 Z M -1.732050 5.943749 L -1.887935 5.673750 L -1.732050 5.583750 L -1.576166 5.673750 Z M -1.683336 5.971875 L -1.527452 5.701875 L -1.371567 5.791874 L -1.371567 5.971875 Z M -1.683336 6.028124 L -1.371567 6.028124 L -1.371567 6.208125 L -1.527452 6.298124 Z M -1.732050 6.056250 L -1.576166 6.326249 L -1.732050 6.416249 L -1.887935 6.326249 Z " />
+</g>
+<g id="0xff443a81" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#443a81">
+<path id="grid.hexagon.045" class="mesh2" fill-rule="evenodd" d="M -1.299037 7.199999 L -1.688749 6.974999 L -1.688749 6.525000 L -1.299037 6.300000 L -0.909326 6.525000 L -0.909326 6.974999 Z " />
+</g>
+<g id="0xff443b82" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#443b82">
+<path id="grid.hexagon.046" class="mesh2" fill-rule="evenodd" d="M -6.062177 -2.549999 L -6.451889 -2.775000 L -6.451889 -3.224999 L -6.062177 -3.450000 L -5.672466 -3.224999 L -5.672466 -2.775000 Z " />
+</g>
+<g id="0xff443c83" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#443c83">
+<path id="grid.hexagon.047" class="mesh2" fill-rule="evenodd" d="M -5.677878 -2.221874 L -5.833763 -1.951874 L -5.989647 -2.041875 L -5.989647 -2.221874 Z M -5.677878 -2.278125 L -5.989647 -2.278125 L -5.989647 -2.458124 L -5.833763 -2.548125 Z M -5.629164 -2.306250 L -5.785049 -2.576250 L -5.629164 -2.666249 L -5.473279 -2.576250 Z M -5.580451 -2.278125 L -5.424566 -2.548125 L -5.268681 -2.458124 L -5.268681 -2.278125 Z M -5.580450 -2.221874 L -5.268681 -2.221874 L -5.268681 -2.041875 L -5.424566 -1.951874 Z M -5.629164 -2.193749 L -5.473279 -1.923750 L -5.629164 -1.833749 L -5.785049 -1.923750 Z " />
+</g>
+<g id="0xff433d83" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#433d83">
+<path id="grid.hexagon.048" class="mesh2" fill-rule="evenodd" d="M -5.196152 -1.049999 L -5.585863 -1.274999 L -5.585863 -1.725000 L -5.196152 -1.950000 L -4.806440 -1.725000 L -4.806440 -1.274999 Z " />
+</g>
+<g id="0xff433e84" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#433e84">
+<path id="grid.hexagon.049" class="mesh2" fill-rule="evenodd" d="M -4.763139 -0.300000 L -5.152850 -0.525000 L -5.152850 -0.975000 L -4.763139 -1.200000 L -4.373427 -0.975000 L -4.373427 -0.525000 Z " />
+</g>
+<g id="0xff433f84" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#433f84">
+<path id="grid.hexagon.050" class="mesh2" fill-rule="evenodd" d="M -4.378840 0.028124 L -4.534725 0.298124 L -4.690609 0.208124 L -4.690609 0.028124 Z M -4.378840 -0.028124 L -4.690609 -0.028124 L -4.690609 -0.208124 L -4.534725 -0.298124 Z M -4.330126 -0.056249 L -4.486011 -0.326249 L -4.330126 -0.416249 L -4.174242 -0.326249 Z M -4.281413 -0.028124 L -4.125528 -0.298124 L -3.969643 -0.208124 L -3.969643 -0.028124 Z M -4.281413 0.028124 L -3.969643 0.028124 L -3.969643 0.208124 L -4.125528 0.298124 Z M -4.330126 0.056249 L -4.174242 0.326249 L -4.330126 0.416249 L -4.486011 0.326249 Z " />
+</g>
+<g id="0xff424085" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#424085">
+<path id="grid.hexagon.051" class="mesh2" fill-rule="evenodd" d="M -3.897113 1.200000 L -4.286825 0.975000 L -4.286825 0.525000 L -3.897113 0.300000 L -3.507402 0.525000 L -3.507402 0.975000 Z " />
+</g>
+<g id="0xff424285" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#424285">
+<path id="grid.hexagon.052" class="mesh2" fill-rule="evenodd" d="M -3.464101 1.950000 L -3.853812 1.725000 L -3.853812 1.274999 L -3.464101 1.049999 L -3.074389 1.274999 L -3.074389 1.725000 Z " />
+</g>
+<g id="0xff414386" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#414386">
+<path id="grid.hexagon.053" class="mesh2" fill-rule="evenodd" d="M -3.079802 2.278125 L -3.235687 2.548125 L -3.391571 2.458124 L -3.391571 2.278125 Z M -3.079802 2.221874 L -3.391571 2.221874 L -3.391571 2.041875 L -3.235687 1.951874 Z M -3.031088 2.193749 L -3.186973 1.923750 L -3.031088 1.833749 L -2.875204 1.923750 Z M -2.982374 2.221874 L -2.826490 1.951874 L -2.670605 2.041875 L -2.670605 2.221874 Z M -2.982374 2.278125 L -2.670605 2.278125 L -2.670605 2.458124 L -2.826490 2.548125 Z M -3.031088 2.306250 L -2.875204 2.576250 L -3.031088 2.666249 L -3.186973 2.576250 Z " />
+</g>
+<g id="0xff414487" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#414487">
+<path id="grid.hexagon.054" class="mesh2" fill-rule="evenodd" d="M -2.598075 3.450000 L -2.987787 3.224999 L -2.987787 2.775000 L -2.598075 2.549999 L -2.208364 2.775000 L -2.208364 3.224999 Z " />
+</g>
+<g id="0xff414587" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#414587">
+<path id="grid.hexagon.055" class="mesh2" fill-rule="evenodd" d="M -2.165063 4.199999 L -2.554774 3.974999 L -2.554774 3.525000 L -2.165063 3.299999 L -1.775352 3.525000 L -1.775352 3.974999 Z " />
+</g>
+<g id="0xff404687" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#404687">
+<path id="grid.hexagon.056" class="mesh2" fill-rule="evenodd" d="M -1.780764 4.528124 L -1.936649 4.798124 L -2.092533 4.708125 L -2.092533 4.528124 Z M -1.780764 4.471875 L -2.092533 4.471875 L -2.092533 4.291874 L -1.936649 4.201875 Z M -1.732050 4.443749 L -1.887935 4.173750 L -1.732050 4.083750 L -1.576166 4.173750 Z M -1.683336 4.471875 L -1.527452 4.201875 L -1.371567 4.291874 L -1.371567 4.471875 Z M -1.683336 4.528124 L -1.371567 4.528124 L -1.371567 4.708125 L -1.527452 4.798124 Z M -1.732050 4.556250 L -1.576166 4.826249 L -1.732050 4.916249 L -1.887935 4.826249 Z " />
+</g>
+<g id="0xff404788" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#404788">
+<path id="grid.hexagon.057" class="mesh2" fill-rule="evenodd" d="M -1.299037 5.699999 L -1.688749 5.474999 L -1.688749 5.025000 L -1.299037 4.800000 L -0.909326 5.025000 L -0.909326 5.474999 Z " />
+</g>
+<g id="0xff404888" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#404888">
+<path id="grid.hexagon.058" class="mesh2" fill-rule="evenodd" d="M -0.866025 6.449999 L -1.255736 6.224999 L -1.255736 5.775000 L -0.866025 5.550000 L -0.476313 5.775000 L -0.476313 6.224999 Z " />
+</g>
+<g id="0xff3f4988" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3f4988">
+<path id="grid.hexagon.059" class="mesh2" fill-rule="evenodd" d="M -0.481726 6.778124 L -0.637610 7.048124 L -0.793495 6.958125 L -0.793495 6.778124 Z M -0.481726 6.721875 L -0.793495 6.721875 L -0.793495 6.541874 L -0.637610 6.451875 Z M -0.433012 6.693749 L -0.588897 6.423750 L -0.433012 6.333750 L -0.277127 6.423750 Z M -0.384298 6.721875 L -0.228414 6.451875 L -0.072529 6.541874 L -0.072529 6.721875 Z M -0.384298 6.778124 L -0.072529 6.778124 L -0.072529 6.958125 L -0.228414 7.048124 Z M -0.433012 6.806250 L -0.277127 7.076249 L -0.433012 7.166249 L -0.588897 7.076249 Z " />
+</g>
+<g id="0xff3f4a88" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3f4a88">
+<path id="grid.hexagon.060" class="mesh2" fill-rule="evenodd" d="M -5.629164 -3.299999 L -6.018876 -3.525000 L -6.018876 -3.974999 L -5.629164 -4.199999 L -5.239453 -3.974999 L -5.239453 -3.525000 Z " />
+</g>
+<g id="0xff3e4b89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3e4b89">
+<path id="grid.hexagon.061" class="mesh2" fill-rule="evenodd" d="M -5.196152 -2.549999 L -5.585863 -2.775000 L -5.585863 -3.224999 L -5.196152 -3.450000 L -4.806440 -3.224999 L -4.806440 -2.775000 Z " />
+</g>
+<g id="0xff3e4c89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3e4c89">
+<path id="grid.hexagon.062" class="mesh2" fill-rule="evenodd" d="M -4.811853 -2.221874 L -4.967738 -1.951874 L -5.123622 -2.041875 L -5.123622 -2.221874 Z M -4.811853 -2.278125 L -5.123622 -2.278125 L -5.123622 -2.458124 L -4.967738 -2.548125 Z M -4.763139 -2.306250 L -4.919024 -2.576250 L -4.763139 -2.666249 L -4.607254 -2.576250 Z M -4.714426 -2.278125 L -4.558541 -2.548125 L -4.402656 -2.458124 L -4.402656 -2.278125 Z M -4.714426 -2.221874 L -4.402656 -2.221874 L -4.402656 -2.041875 L -4.558541 -1.951874 Z M -4.763139 -2.193749 L -4.607254 -1.923750 L -4.763139 -1.833749 L -4.919024 -1.923750 Z " />
+</g>
+<g id="0xff3e4d89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3e4d89">
+<path id="grid.hexagon.063" class="mesh2" fill-rule="evenodd" d="M -4.330126 -1.049999 L -4.719838 -1.274999 L -4.719838 -1.725000 L -4.330126 -1.950000 L -3.940415 -1.725000 L -3.940415 -1.274999 Z " />
+</g>
+<g id="0xff3d4e8a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3d4e8a">
+<path id="grid.hexagon.064" class="mesh2" fill-rule="evenodd" d="M -3.897114 -0.300000 L -4.286825 -0.525000 L -4.286825 -0.975000 L -3.897114 -1.200000 L -3.507402 -0.975000 L -3.507402 -0.525000 Z " />
+</g>
+<g id="0xff3d508a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3d508a">
+<path id="grid.hexagon.065" class="mesh2" fill-rule="evenodd" d="M -3.512815 0.028124 L -3.668699 0.298124 L -3.824584 0.208124 L -3.824584 0.028124 Z M -3.512815 -0.028124 L -3.824584 -0.028124 L -3.824584 -0.208124 L -3.668699 -0.298124 Z M -3.464101 -0.056249 L -3.619986 -0.326249 L -3.464101 -0.416249 L -3.308217 -0.326249 Z M -3.415387 -0.028124 L -3.259503 -0.298124 L -3.103618 -0.208124 L -3.103618 -0.028124 Z M -3.415387 0.028124 L -3.103618 0.028124 L -3.103618 0.208124 L -3.259503 0.298124 Z M -3.464101 0.056249 L -3.308217 0.326249 L -3.464101 0.416249 L -3.619986 0.326249 Z " />
+</g>
+<g id="0xff3c518a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3c518a">
+<path id="grid.hexagon.066" class="mesh2" fill-rule="evenodd" d="M -3.031088 1.200000 L -3.420800 0.975000 L -3.420800 0.525000 L -3.031088 0.300000 L -2.641377 0.525000 L -2.641377 0.975000 Z " />
+</g>
+<g id="0xff3c528b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3c528b">
+<path id="grid.hexagon.067" class="mesh2" fill-rule="evenodd" d="M -2.598076 1.950000 L -2.987787 1.725000 L -2.987787 1.274999 L -2.598076 1.049999 L -2.208364 1.274999 L -2.208364 1.725000 Z " />
+</g>
+<g id="0xff3b538b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3b538b">
+<path id="grid.hexagon.068" class="mesh2" fill-rule="evenodd" d="M -2.213777 2.278125 L -2.369661 2.548125 L -2.525546 2.458124 L -2.525546 2.278125 Z M -2.213777 2.221874 L -2.525546 2.221874 L -2.525546 2.041875 L -2.369661 1.951874 Z M -2.165063 2.193749 L -2.320947 1.923750 L -2.165063 1.833749 L -2.009178 1.923750 Z M -2.116349 2.221874 L -1.960464 1.951874 L -1.804580 2.041875 L -1.804580 2.221874 Z M -2.116349 2.278125 L -1.804580 2.278125 L -1.804580 2.458124 L -1.960464 2.548125 Z M -2.165063 2.306250 L -2.009178 2.576250 L -2.165063 2.666249 L -2.320947 2.576250 Z " />
+</g>
+<g id="0xff3a548b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3a548b">
+<path id="grid.hexagon.069" class="mesh2" fill-rule="evenodd" d="M -1.732050 3.450000 L -2.121762 3.224999 L -2.121762 2.775000 L -1.732050 2.549999 L -1.342339 2.775000 L -1.342339 3.224999 Z " />
+</g>
+<g id="0xff3a558b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3a558b">
+<path id="grid.hexagon.070" class="mesh2" fill-rule="evenodd" d="M -1.299038 4.199999 L -1.688749 3.974999 L -1.688749 3.525000 L -1.299038 3.299999 L -0.909326 3.525000 L -0.909326 3.974999 Z " />
+</g>
+<g id="0xff39568c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#39568c">
+<path id="grid.hexagon.071" class="mesh2" fill-rule="evenodd" d="M -0.914739 4.528124 L -1.070623 4.798124 L -1.226508 4.708125 L -1.226508 4.528124 Z M -0.914739 4.471875 L -1.226508 4.471875 L -1.226508 4.291874 L -1.070623 4.201875 Z M -0.866025 4.443749 L -1.021909 4.173750 L -0.866025 4.083750 L -0.710140 4.173750 Z M -0.817311 4.471875 L -0.661426 4.201875 L -0.505542 4.291874 L -0.505542 4.471875 Z M -0.817311 4.528124 L -0.505542 4.528124 L -0.505542 4.708125 L -0.661426 4.798124 Z M -0.866025 4.556250 L -0.710140 4.826249 L -0.866025 4.916249 L -1.021909 4.826249 Z " />
+</g>
+<g id="0xff39578c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#39578c">
+<path id="grid.hexagon.072" class="mesh2" fill-rule="evenodd" d="M -0.433012 5.699999 L -0.822724 5.474999 L -0.822724 5.025000 L -0.433012 4.800000 L -0.043301 5.025000 L -0.043301 5.474999 Z " />
+</g>
+<g id="0xff38588c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#38588c">
+<path id="grid.hexagon.073" class="mesh2" fill-rule="evenodd" d="M 0.0 6.449999 L -0.389711 6.224999 L -0.389711 5.775000 L 0.0 5.550000 L 0.389711 5.775000 L 0.389711 6.224999 Z " />
+</g>
+<g id="0xff38598c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#38598c">
+<path id="grid.hexagon.074" class="mesh2" fill-rule="evenodd" d="M 0.384298 6.778124 L 0.228414 7.048124 L 0.072529 6.958125 L 0.072529 6.778124 Z M 0.384298 6.721875 L 0.072529 6.721875 L 0.072529 6.541874 L 0.228414 6.451875 Z M 0.433012 6.693749 L 0.277128 6.423750 L 0.433012 6.333750 L 0.588897 6.423750 Z M 0.481726 6.721875 L 0.637611 6.451875 L 0.793495 6.541874 L 0.793495 6.721875 Z M 0.481726 6.778124 L 0.793495 6.778124 L 0.793495 6.958125 L 0.637611 7.048124 Z M 0.433012 6.806250 L 0.588897 7.076249 L 0.433012 7.166249 L 0.277128 7.076249 Z " />
+</g>
+<g id="0xff385a8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#385a8c">
+<path id="grid.hexagon.075" class="mesh2" fill-rule="evenodd" d="M -5.196152 -4.050000 L -5.585863 -4.275000 L -5.585863 -4.724999 L -5.196152 -4.949999 L -4.806440 -4.724999 L -4.806440 -4.275000 Z " />
+</g>
+<g id="0xff375b8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#375b8c">
+<path id="grid.hexagon.076" class="mesh2" fill-rule="evenodd" d="M -4.763139 -3.299999 L -5.152851 -3.525000 L -5.152851 -3.974999 L -4.763139 -4.199999 L -4.373428 -3.974999 L -4.373428 -3.525000 Z " />
+</g>
+<g id="0xff375b8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#375b8c">
+<path id="grid.hexagon.077" class="mesh2" fill-rule="evenodd" d="M -4.378840 -2.971874 L -4.534725 -2.701874 L -4.690609 -2.791875 L -4.690609 -2.971875 Z M -4.378840 -3.028124 L -4.690609 -3.028125 L -4.690609 -3.208124 L -4.534725 -3.298125 Z M -4.330126 -3.056249 L -4.486011 -3.326250 L -4.330126 -3.416249 L -4.174242 -3.326250 Z M -4.281413 -3.028124 L -4.125528 -3.298125 L -3.969643 -3.208124 L -3.969643 -3.028125 Z M -4.281413 -2.971874 L -3.969643 -2.971875 L -3.969643 -2.791875 L -4.125528 -2.701874 Z M -4.330126 -2.943749 L -4.174242 -2.673749 L -4.330126 -2.583750 L -4.486011 -2.673749 Z " />
+</g>
+<g id="0xff375c8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#375c8d">
+<path id="grid.hexagon.078" class="mesh2" fill-rule="evenodd" d="M -3.897114 -1.799999 L -4.286825 -2.025000 L -4.286825 -2.474999 L -3.897114 -2.700000 L -3.507402 -2.474999 L -3.507402 -2.025000 Z " />
+</g>
+<g id="0xff365d8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#365d8d">
+<path id="grid.hexagon.079" class="mesh2" fill-rule="evenodd" d="M -3.464101 -1.049999 L -3.853812 -1.274999 L -3.853812 -1.725000 L -3.464101 -1.950000 L -3.074390 -1.725000 L -3.074390 -1.274999 Z " />
+</g>
+<g id="0xff365e8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#365e8d">
+<path id="grid.hexagon.080" class="mesh2" fill-rule="evenodd" d="M -3.079802 -0.721875 L -3.235687 -0.451874 L -3.391571 -0.541874 L -3.391571 -0.721875 Z M -3.079802 -0.778125 L -3.391571 -0.778125 L -3.391571 -0.958125 L -3.235687 -1.048125 Z M -3.031088 -0.806250 L -3.186973 -1.076250 L -3.031088 -1.166249 L -2.875204 -1.076250 Z M -2.982374 -0.778125 L -2.826490 -1.048125 L -2.670605 -0.958125 L -2.670605 -0.778125 Z M -2.982374 -0.721875 L -2.670605 -0.721875 L -2.670605 -0.541874 L -2.826490 -0.451874 Z M -3.031088 -0.693750 L -2.875204 -0.423750 L -3.031088 -0.333750 L -3.186973 -0.423750 Z " />
+</g>
+<g id="0xff355f8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#355f8d">
+<path id="grid.hexagon.081" class="mesh2" fill-rule="evenodd" d="M -2.598076 0.450000 L -2.987787 0.225000 L -2.987787 -0.225000 L -2.598076 -0.450000 L -2.208364 -0.225000 L -2.208364 0.225000 Z " />
+</g>
+<g id="0xff35608d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#35608d">
+<path id="grid.hexagon.082" class="mesh2" fill-rule="evenodd" d="M -2.165063 1.200000 L -2.554774 0.975000 L -2.554774 0.525000 L -2.165063 0.300000 L -1.775352 0.525000 L -1.775352 0.975000 Z " />
+</g>
+<g id="0xff34618d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#34618d">
+<path id="grid.hexagon.083" class="mesh2" fill-rule="evenodd" d="M -1.780764 1.528125 L -1.936649 1.798125 L -2.092533 1.708125 L -2.092533 1.528125 Z M -1.780764 1.471874 L -2.092533 1.471874 L -2.092533 1.291875 L -1.936649 1.201874 Z M -1.732050 1.443750 L -1.887935 1.173749 L -1.732050 1.083750 L -1.576166 1.173749 Z M -1.683336 1.471874 L -1.527452 1.201874 L -1.371567 1.291875 L -1.371567 1.471874 Z M -1.683336 1.528125 L -1.371567 1.528125 L -1.371567 1.708125 L -1.527452 1.798125 Z M -1.732050 1.556250 L -1.576166 1.826250 L -1.732050 1.916250 L -1.887935 1.826250 Z " />
+</g>
+<g id="0xff34628d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#34628d">
+<path id="grid.hexagon.084" class="mesh2" fill-rule="evenodd" d="M -1.299038 2.700000 L -1.688749 2.474999 L -1.688749 2.025000 L -1.299038 1.799999 L -0.909326 2.025000 L -0.909326 2.474999 Z " />
+</g>
+<g id="0xff34638d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#34638d">
+<path id="grid.hexagon.085" class="mesh2" fill-rule="evenodd" d="M -0.866025 3.450000 L -1.255736 3.224999 L -1.255736 2.775000 L -0.866025 2.549999 L -0.476313 2.775000 L -0.476313 3.224999 Z " />
+</g>
+<g id="0xff33648d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#33648d">
+<path id="grid.hexagon.086" class="mesh2" fill-rule="evenodd" d="M -0.481726 3.778125 L -0.637611 4.048124 L -0.793495 3.958124 L -0.793495 3.778125 Z M -0.481726 3.721874 L -0.793495 3.721874 L -0.793495 3.541875 L -0.637611 3.451874 Z M -0.433012 3.693749 L -0.588897 3.423749 L -0.433012 3.333750 L -0.277128 3.423749 Z M -0.384298 3.721874 L -0.228414 3.451874 L -0.072529 3.541875 L -0.072529 3.721874 Z M -0.384298 3.778125 L -0.072529 3.778125 L -0.072529 3.958124 L -0.228414 4.048124 Z M -0.433012 3.806250 L -0.277128 4.076249 L -0.433012 4.166249 L -0.588897 4.076249 Z " />
+</g>
+<g id="0xff33658d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#33658d">
+<path id="grid.hexagon.087" class="mesh2" fill-rule="evenodd" d="M 0.0 4.949999 L -0.389711 4.724999 L -0.389711 4.275000 L 0.0 4.050000 L 0.389711 4.275000 L 0.389711 4.724999 Z " />
+</g>
+<g id="0xff32668d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#32668d">
+<path id="grid.hexagon.088" class="mesh2" fill-rule="evenodd" d="M 0.433012 5.699999 L 0.043301 5.474999 L 0.043301 5.025000 L 0.433012 4.800000 L 0.822724 5.025000 L 0.822724 5.474999 Z " />
+</g>
+<g id="0xff32668d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#32668d">
+<path id="grid.hexagon.089" class="mesh2" fill-rule="evenodd" d="M 0.817311 6.028124 L 0.661426 6.298124 L 0.505542 6.208125 L 0.505542 6.028124 Z M 0.817311 5.971875 L 0.505542 5.971875 L 0.505542 5.791874 L 0.661426 5.701875 Z M 0.866025 5.943749 L 0.710140 5.673750 L 0.866025 5.583750 L 1.021909 5.673750 Z M 0.914739 5.971875 L 1.070623 5.701875 L 1.226508 5.791874 L 1.226508 5.971875 Z M 0.914739 6.028124 L 1.226508 6.028124 L 1.226508 6.208125 L 1.070623 6.298124 Z M 0.866025 6.056250 L 1.021909 6.326249 L 0.866025 6.416249 L 0.710140 6.326249 Z " />
+</g>
+<g id="0xff31678d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#31678d">
+<path id="grid.hexagon.090" class="mesh2" fill-rule="evenodd" d="M 1.299038 7.199999 L 0.909326 6.974999 L 0.909326 6.525000 L 1.299038 6.300000 L 1.688749 6.525000 L 1.688749 6.974999 Z " />
+</g>
+<g id="0xff31688d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#31688d">
+<path id="grid.hexagon.091" class="mesh2" fill-rule="evenodd" d="M -4.763139 -4.800000 L -5.152851 -5.025000 L -5.152851 -5.474999 L -4.763139 -5.699999 L -4.373428 -5.474999 L -4.373428 -5.025000 Z " />
+</g>
+<g id="0xff30698d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#30698d">
+<path id="grid.hexagon.092" class="mesh2" fill-rule="evenodd" d="M -4.378840 -4.471875 L -4.534725 -4.201875 L -4.690609 -4.291874 L -4.690609 -4.471875 Z M -4.378840 -4.528124 L -4.690609 -4.528124 L -4.690609 -4.708125 L -4.534725 -4.798124 Z M -4.330126 -4.556250 L -4.486011 -4.826249 L -4.330126 -4.916249 L -4.174242 -4.826249 Z M -4.281413 -4.528124 L -4.125528 -4.798124 L -3.969643 -4.708125 L -3.969643 -4.528124 Z M -4.281413 -4.471875 L -3.969643 -4.471875 L -3.969643 -4.291874 L -4.125528 -4.201875 Z M -4.330126 -4.443749 L -4.174242 -4.173750 L -4.330126 -4.083750 L -4.486011 -4.173750 Z " />
+</g>
+<g id="0xff306a8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#306a8d">
+<path id="grid.hexagon.093" class="mesh2" fill-rule="evenodd" d="M -3.897114 -3.299999 L -4.286825 -3.525000 L -4.286825 -3.974999 L -3.897114 -4.199999 L -3.507402 -3.974999 L -3.507402 -3.525000 Z " />
+</g>
+<g id="0xff306b8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#306b8d">
+<path id="grid.hexagon.094" class="mesh2" fill-rule="evenodd" d="M -3.464101 -2.549999 L -3.853812 -2.775000 L -3.853812 -3.224999 L -3.464101 -3.450000 L -3.074390 -3.224999 L -3.074390 -2.775000 Z " />
+</g>
+<g id="0xff2f6c8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2f6c8e">
+<path id="grid.hexagon.095" class="mesh2" fill-rule="evenodd" d="M -3.079802 -2.221874 L -3.235687 -1.951874 L -3.391571 -2.041875 L -3.391571 -2.221874 Z M -3.079802 -2.278125 L -3.391571 -2.278125 L -3.391571 -2.458124 L -3.235687 -2.548125 Z M -3.031088 -2.306250 L -3.186973 -2.576250 L -3.031088 -2.666249 L -2.875204 -2.576250 Z M -2.982374 -2.278125 L -2.826490 -2.548125 L -2.670605 -2.458124 L -2.670605 -2.278125 Z M -2.982374 -2.221874 L -2.670605 -2.221874 L -2.670605 -2.041875 L -2.826490 -1.951874 Z M -3.031088 -2.193749 L -2.875204 -1.923750 L -3.031088 -1.833749 L -3.186973 -1.923750 Z " />
+</g>
+<g id="0xff2f6d8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2f6d8e">
+<path id="grid.hexagon.096" class="mesh2" fill-rule="evenodd" d="M -2.598076 -1.049999 L -2.987787 -1.274999 L -2.987787 -1.725000 L -2.598076 -1.950000 L -2.208364 -1.725000 L -2.208364 -1.274999 Z " />
+</g>
+<g id="0xff2f6e8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2f6e8e">
+<path id="grid.hexagon.097" class="mesh2" fill-rule="evenodd" d="M -2.165063 -0.300000 L -2.554774 -0.525000 L -2.554774 -0.975000 L -2.165063 -1.200000 L -1.775352 -0.975000 L -1.775352 -0.525000 Z " />
+</g>
+<g id="0xff2e6f8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2e6f8e">
+<path id="grid.hexagon.098" class="mesh2" fill-rule="evenodd" d="M -1.780764 0.028124 L -1.936649 0.298124 L -2.092533 0.208124 L -2.092533 0.028124 Z M -1.780764 -0.028124 L -2.092533 -0.028124 L -2.092533 -0.208124 L -1.936649 -0.298124 Z M -1.732050 -0.056249 L -1.887935 -0.326249 L -1.732050 -0.416249 L -1.576166 -0.326249 Z M -1.683336 -0.028124 L -1.527452 -0.298124 L -1.371567 -0.208124 L -1.371567 -0.028124 Z M -1.683336 0.028124 L -1.371567 0.028124 L -1.371567 0.208124 L -1.527452 0.298124 Z M -1.732050 0.056249 L -1.576166 0.326249 L -1.732050 0.416249 L -1.887935 0.326249 Z " />
+</g>
+<g id="0xff2e708e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2e708e">
+<path id="grid.hexagon.099" class="mesh2" fill-rule="evenodd" d="M -1.299038 1.200000 L -1.688749 0.975000 L -1.688749 0.525000 L -1.299038 0.300000 L -0.909326 0.525000 L -0.909326 0.975000 Z " />
+</g>
+<g id="0xff2e718e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2e718e">
+<path id="grid.hexagon.100" class="mesh2" fill-rule="evenodd" d="M -0.866025 1.950000 L -1.255736 1.725000 L -1.255736 1.274999 L -0.866025 1.049999 L -0.476313 1.274999 L -0.476313 1.725000 Z " />
+</g>
+<g id="0xff2d718e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2d718e">
+<path id="grid.hexagon.101" class="mesh2" fill-rule="evenodd" d="M -0.481726 2.278125 L -0.637611 2.548125 L -0.793495 2.458124 L -0.793495 2.278125 Z M -0.481726 2.221874 L -0.793495 2.221874 L -0.793495 2.041875 L -0.637611 1.951874 Z M -0.433012 2.193749 L -0.588897 1.923750 L -0.433012 1.833749 L -0.277128 1.923750 Z M -0.384298 2.221874 L -0.228414 1.951874 L -0.072529 2.041875 L -0.072529 2.221874 Z M -0.384298 2.278125 L -0.072529 2.278125 L -0.072529 2.458124 L -0.228414 2.548125 Z M -0.433012 2.306250 L -0.277128 2.576250 L -0.433012 2.666249 L -0.588897 2.576250 Z " />
+</g>
+<g id="0xff2d728e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2d728e">
+<path id="grid.hexagon.102" class="mesh2" fill-rule="evenodd" d="M 0.0 3.450000 L -0.389711 3.224999 L -0.389711 2.775000 L 0.0 2.549999 L 0.389711 2.775000 L 0.389711 3.224999 Z " />
+</g>
+<g id="0xff2c738e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2c738e">
+<path id="grid.hexagon.103" class="mesh2" fill-rule="evenodd" d="M 0.433012 4.199999 L 0.043301 3.974999 L 0.043301 3.525000 L 0.433012 3.299999 L 0.822723 3.525000 L 0.822723 3.974999 Z " />
+</g>
+<g id="0xff2c748e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2c748e">
+<path id="grid.hexagon.104" class="mesh2" fill-rule="evenodd" d="M 0.817311 4.528124 L 0.661426 4.798124 L 0.505542 4.708125 L 0.505542 4.528124 Z M 0.817311 4.471875 L 0.505542 4.471875 L 0.505542 4.291874 L 0.661426 4.201875 Z M 0.866025 4.443749 L 0.710140 4.173750 L 0.866025 4.083750 L 1.021909 4.173750 Z M 0.914739 4.471875 L 1.070623 4.201875 L 1.226508 4.291874 L 1.226508 4.471875 Z M 0.914739 4.528124 L 1.226508 4.528124 L 1.226508 4.708125 L 1.070623 4.798124 Z M 0.866025 4.556250 L 1.021909 4.826249 L 0.866025 4.916249 L 0.710140 4.826249 Z " />
+</g>
+<g id="0xff2b758e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2b758e">
+<path id="grid.hexagon.105" class="mesh2" fill-rule="evenodd" d="M 1.299038 5.699999 L 0.909326 5.474999 L 0.909326 5.025000 L 1.299038 4.800000 L 1.688749 5.025000 L 1.688749 5.474999 Z " />
+</g>
+<g id="0xff2b768e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2b768e">
+<path id="grid.hexagon.106" class="mesh2" fill-rule="evenodd" d="M 1.732050 6.449999 L 1.342339 6.224999 L 1.342339 5.775000 L 1.732050 5.550000 L 2.121762 5.775000 L 2.121762 6.224999 Z " />
+</g>
+<g id="0xff2a778e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2a778e">
+<path id="grid.hexagon.107" class="mesh2" fill-rule="evenodd" d="M 2.116349 6.778124 L 1.960464 7.048124 L 1.804580 6.958125 L 1.804580 6.778124 Z M 2.116349 6.721875 L 1.804580 6.721875 L 1.804580 6.541874 L 1.960464 6.451875 Z M 2.165063 6.693749 L 2.009178 6.423750 L 2.165063 6.333750 L 2.320947 6.423750 Z M 2.213777 6.721875 L 2.369661 6.451875 L 2.525546 6.541874 L 2.525546 6.721875 Z M 2.213777 6.778124 L 2.525546 6.778124 L 2.525546 6.958125 L 2.369661 7.048124 Z M 2.165063 6.806250 L 2.320947 7.076249 L 2.165063 7.166249 L 2.009178 7.076249 Z " />
+</g>
+<g id="0xff2a788e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2a788e">
+<path id="grid.hexagon.108" class="mesh2" fill-rule="evenodd" d="M -4.330126 -5.550000 L -4.719838 -5.775000 L -4.719838 -6.224999 L -4.330126 -6.449999 L -3.940415 -6.224999 L -3.940415 -5.775000 Z " />
+</g>
+<g id="0xff2a798e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2a798e">
+<path id="grid.hexagon.109" class="mesh2" fill-rule="evenodd" d="M -3.897114 -4.800000 L -4.286825 -5.025000 L -4.286825 -5.474999 L -3.897114 -5.699999 L -3.507402 -5.474999 L -3.507402 -5.025000 Z " />
+</g>
+<g id="0xff297a8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#297a8e">
+<path id="grid.hexagon.110" class="mesh2" fill-rule="evenodd" d="M -3.512815 -4.471875 L -3.668699 -4.201875 L -3.824584 -4.291874 L -3.824584 -4.471875 Z M -3.512815 -4.528124 L -3.824584 -4.528124 L -3.824584 -4.708125 L -3.668699 -4.798124 Z M -3.464101 -4.556250 L -3.619986 -4.826249 L -3.464101 -4.916249 L -3.308217 -4.826249 Z M -3.415387 -4.528124 L -3.259503 -4.798124 L -3.103618 -4.708125 L -3.103618 -4.528124 Z M -3.415387 -4.471875 L -3.103618 -4.471875 L -3.103618 -4.291874 L -3.259503 -4.201875 Z M -3.464101 -4.443749 L -3.308217 -4.173750 L -3.464101 -4.083750 L -3.619986 -4.173750 Z " />
+</g>
+<g id="0xff297b8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#297b8e">
+<path id="grid.hexagon.111" class="mesh2" fill-rule="evenodd" d="M -3.031088 -3.299999 L -3.420800 -3.525000 L -3.420800 -3.974999 L -3.031088 -4.199999 L -2.641377 -3.974999 L -2.641377 -3.525000 Z " />
+</g>
+<g id="0xff297b8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#297b8e">
+<path id="grid.hexagon.112" class="mesh2" fill-rule="evenodd" d="M -2.598076 -2.549999 L -2.987787 -2.775000 L -2.987787 -3.224999 L -2.598076 -3.450000 L -2.208364 -3.224999 L -2.208364 -2.775000 Z " />
+</g>
+<g id="0xff287c8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#287c8e">
+<path id="grid.hexagon.113" class="mesh2" fill-rule="evenodd" d="M -2.213777 -2.221874 L -2.369661 -1.951874 L -2.525546 -2.041875 L -2.525546 -2.221874 Z M -2.213777 -2.278125 L -2.525546 -2.278125 L -2.525546 -2.458124 L -2.369661 -2.548125 Z M -2.165063 -2.306250 L -2.320947 -2.576250 L -2.165063 -2.666249 L -2.009178 -2.576250 Z M -2.116349 -2.278125 L -1.960464 -2.548125 L -1.804580 -2.458124 L -1.804580 -2.278125 Z M -2.116349 -2.221874 L -1.804580 -2.221874 L -1.804580 -2.041875 L -1.960464 -1.951874 Z M -2.165063 -2.193749 L -2.009178 -1.923750 L -2.165063 -1.833749 L -2.320947 -1.923750 Z " />
+</g>
+<g id="0xff287d8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#287d8e">
+<path id="grid.hexagon.114" class="mesh2" fill-rule="evenodd" d="M -1.732050 -1.049999 L -2.121762 -1.274999 L -2.121762 -1.725000 L -1.732050 -1.950000 L -1.342339 -1.725000 L -1.342339 -1.274999 Z " />
+</g>
+<g id="0xff287e8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#287e8e">
+<path id="grid.hexagon.115" class="mesh2" fill-rule="evenodd" d="M -1.299038 -0.300000 L -1.688749 -0.525000 L -1.688749 -0.975000 L -1.299038 -1.200000 L -0.909326 -0.975000 L -0.909326 -0.525000 Z " />
+</g>
+<g id="0xff277f8e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#277f8e">
+<path id="grid.hexagon.116" class="mesh2" fill-rule="evenodd" d="M -0.914739 0.028124 L -1.070623 0.298124 L -1.226508 0.208124 L -1.226508 0.028124 Z M -0.914739 -0.028124 L -1.226508 -0.028124 L -1.226508 -0.208124 L -1.070623 -0.298124 Z M -0.866025 -0.056249 L -1.021909 -0.326249 L -0.866025 -0.416249 L -0.710140 -0.326249 Z M -0.817311 -0.028124 L -0.661426 -0.298124 L -0.505542 -0.208124 L -0.505542 -0.028124 Z M -0.817311 0.028124 L -0.505542 0.028124 L -0.505542 0.208124 L -0.661426 0.298124 Z M -0.866025 0.056249 L -0.710140 0.326249 L -0.866025 0.416249 L -1.021909 0.326249 Z " />
+</g>
+<g id="0xff27808e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#27808e">
+<path id="grid.hexagon.117" class="mesh2" fill-rule="evenodd" d="M -0.433012 1.200000 L -0.822724 0.975000 L -0.822724 0.525000 L -0.433012 0.300000 L -0.043301 0.525000 L -0.043301 0.975000 Z " />
+</g>
+<g id="0xff27818e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#27818e">
+<path id="grid.hexagon.118" class="mesh2" fill-rule="evenodd" d="M 0.0 1.950000 L -0.389711 1.725000 L -0.389711 1.274999 L 0.0 1.049999 L 0.389711 1.274999 L 0.389711 1.725000 Z " />
+</g>
+<g id="0xff26828e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#26828e">
+<path id="grid.hexagon.119" class="mesh2" fill-rule="evenodd" d="M 0.384298 2.278125 L 0.228414 2.548125 L 0.072529 2.458124 L 0.072529 2.278125 Z M 0.384298 2.221874 L 0.072529 2.221874 L 0.072529 2.041875 L 0.228414 1.951874 Z M 0.433012 2.193749 L 0.277128 1.923750 L 0.433012 1.833749 L 0.588897 1.923750 Z M 0.481726 2.221874 L 0.637611 1.951874 L 0.793495 2.041875 L 0.793495 2.221874 Z M 0.481726 2.278125 L 0.793495 2.278125 L 0.793495 2.458124 L 0.637611 2.548125 Z M 0.433012 2.306250 L 0.588897 2.576250 L 0.433012 2.666249 L 0.277128 2.576250 Z " />
+</g>
+<g id="0xff26838d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#26838d">
+<path id="grid.hexagon.120" class="mesh2" fill-rule="evenodd" d="M 0.866025 3.450000 L 0.476313 3.224999 L 0.476313 2.775000 L 0.866025 2.549999 L 1.255736 2.775000 L 1.255736 3.224999 Z " />
+</g>
+<g id="0xff26848d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#26848d">
+<path id="grid.hexagon.121" class="mesh2" fill-rule="evenodd" d="M 1.299037 4.199999 L 0.909326 3.974999 L 0.909326 3.525000 L 1.299037 3.299999 L 1.688749 3.525000 L 1.688749 3.974999 Z " />
+</g>
+<g id="0xff25858d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#25858d">
+<path id="grid.hexagon.122" class="mesh2" fill-rule="evenodd" d="M 1.683336 4.528124 L 1.527452 4.798124 L 1.371567 4.708125 L 1.371567 4.528124 Z M 1.683336 4.471875 L 1.371567 4.471875 L 1.371567 4.291874 L 1.527452 4.201875 Z M 1.732050 4.443749 L 1.576166 4.173750 L 1.732050 4.083750 L 1.887935 4.173750 Z M 1.780764 4.471875 L 1.936649 4.201875 L 2.092533 4.291874 L 2.092533 4.471875 Z M 1.780764 4.528124 L 2.092533 4.528124 L 2.092533 4.708125 L 1.936649 4.798124 Z M 1.732050 4.556250 L 1.887935 4.826249 L 1.732050 4.916249 L 1.576166 4.826249 Z " />
+</g>
+<g id="0xff25868d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#25868d">
+<path id="grid.hexagon.123" class="mesh2" fill-rule="evenodd" d="M 2.165063 5.699999 L 1.775352 5.474999 L 1.775352 5.025000 L 2.165063 4.800000 L 2.554774 5.025000 L 2.554774 5.474999 Z " />
+</g>
+<g id="0xff24868d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#24868d">
+<path id="grid.hexagon.124" class="mesh2" fill-rule="evenodd" d="M 2.598076 6.449999 L 2.208364 6.224999 L 2.208364 5.775000 L 2.598076 5.550000 L 2.987787 5.775000 L 2.987787 6.224999 Z " />
+</g>
+<g id="0xff24878d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#24878d">
+<path id="grid.hexagon.125" class="mesh2" fill-rule="evenodd" d="M 2.982374 6.778124 L 2.826490 7.048124 L 2.670605 6.958125 L 2.670605 6.778124 Z M 2.982374 6.721875 L 2.670605 6.721875 L 2.670605 6.541874 L 2.826490 6.451875 Z M 3.031088 6.693749 L 2.875204 6.423750 L 3.031088 6.333750 L 3.186973 6.423750 Z M 3.079802 6.721875 L 3.235687 6.451875 L 3.391571 6.541874 L 3.391571 6.721875 Z M 3.079802 6.778124 L 3.391571 6.778124 L 3.391571 6.958125 L 3.235687 7.048124 Z M 3.031088 6.806250 L 3.186973 7.076249 L 3.031088 7.166249 L 2.875204 7.076249 Z " />
+</g>
+<g id="0xff24888d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#24888d">
+<path id="grid.hexagon.126" class="mesh2" fill-rule="evenodd" d="M -3.897114 -6.300000 L -4.286825 -6.525000 L -4.286825 -6.974999 L -3.897114 -7.199999 L -3.507402 -6.974999 L -3.507402 -6.525000 Z " />
+</g>
+<g id="0xff23898d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#23898d">
+<path id="grid.hexagon.127" class="mesh2" fill-rule="evenodd" d="M -3.464101 -5.550000 L -3.853812 -5.775000 L -3.853812 -6.224999 L -3.464101 -6.449999 L -3.074390 -6.224999 L -3.074390 -5.775000 Z " />
+</g>
+<g id="0xff238a8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#238a8d">
+<path id="grid.hexagon.128" class="mesh2" fill-rule="evenodd" d="M -3.079802 -5.221875 L -3.235687 -4.951875 L -3.391571 -5.041874 L -3.391571 -5.221875 Z M -3.079802 -5.278124 L -3.391571 -5.278124 L -3.391571 -5.458125 L -3.235687 -5.548124 Z M -3.031088 -5.306250 L -3.186973 -5.576249 L -3.031088 -5.666249 L -2.875204 -5.576249 Z M -2.982374 -5.278124 L -2.826490 -5.548124 L -2.670605 -5.458125 L -2.670605 -5.278124 Z M -2.982374 -5.221875 L -2.670605 -5.221875 L -2.670605 -5.041874 L -2.826490 -4.951875 Z M -3.031088 -5.193749 L -2.875204 -4.923750 L -3.031088 -4.833750 L -3.186973 -4.923750 Z " />
+</g>
+<g id="0xff238b8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#238b8d">
+<path id="grid.hexagon.129" class="mesh2" fill-rule="evenodd" d="M -2.598076 -4.050000 L -2.987787 -4.275000 L -2.987787 -4.724999 L -2.598076 -4.949999 L -2.208364 -4.724999 L -2.208364 -4.275000 Z " />
+</g>
+<g id="0xff238c8d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#238c8d">
+<path id="grid.hexagon.130" class="mesh2" fill-rule="evenodd" d="M -2.165063 -3.299999 L -2.554774 -3.525000 L -2.554774 -3.974999 L -2.165063 -4.199999 L -1.775352 -3.974999 L -1.775352 -3.525000 Z " />
+</g>
+<g id="0xff228d8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#228d8c">
+<path id="grid.hexagon.131" class="mesh2" fill-rule="evenodd" d="M -1.780764 -2.971874 L -1.936649 -2.701874 L -2.092533 -2.791875 L -2.092533 -2.971875 Z M -1.780764 -3.028124 L -2.092533 -3.028125 L -2.092533 -3.208124 L -1.936649 -3.298125 Z M -1.732050 -3.056249 L -1.887935 -3.326250 L -1.732050 -3.416249 L -1.576166 -3.326250 Z M -1.683336 -3.028124 L -1.527452 -3.298125 L -1.371567 -3.208124 L -1.371567 -3.028125 Z M -1.683336 -2.971874 L -1.371567 -2.971875 L -1.371567 -2.791875 L -1.527452 -2.701874 Z M -1.732050 -2.943749 L -1.576166 -2.673749 L -1.732050 -2.583750 L -1.887935 -2.673749 Z " />
+</g>
+<g id="0xff228d8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#228d8c">
+<path id="grid.hexagon.132" class="mesh2" fill-rule="evenodd" d="M -1.299038 -1.799999 L -1.688749 -2.025000 L -1.688749 -2.474999 L -1.299038 -2.700000 L -0.909326 -2.474999 L -0.909326 -2.025000 Z " />
+</g>
+<g id="0xff228e8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#228e8c">
+<path id="grid.hexagon.133" class="mesh2" fill-rule="evenodd" d="M -0.866025 -1.049999 L -1.255736 -1.274999 L -1.255736 -1.725000 L -0.866025 -1.950000 L -0.476313 -1.725000 L -0.476313 -1.274999 Z " />
+</g>
+<g id="0xff228f8c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#228f8c">
+<path id="grid.hexagon.134" class="mesh2" fill-rule="evenodd" d="M -0.481726 -0.721875 L -0.637611 -0.451874 L -0.793495 -0.541874 L -0.793495 -0.721875 Z M -0.481726 -0.778125 L -0.793495 -0.778125 L -0.793495 -0.958125 L -0.637611 -1.048125 Z M -0.433012 -0.806250 L -0.588897 -1.076250 L -0.433012 -1.166249 L -0.277128 -1.076250 Z M -0.384298 -0.778125 L -0.228414 -1.048125 L -0.072529 -0.958125 L -0.072529 -0.778125 Z M -0.384298 -0.721875 L -0.072529 -0.721875 L -0.072529 -0.541874 L -0.228414 -0.451874 Z M -0.433012 -0.693750 L -0.277128 -0.423750 L -0.433012 -0.333750 L -0.588897 -0.423750 Z " />
+</g>
+<g id="0xff21908c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21908c">
+<path id="grid.hexagon.135" class="mesh2" fill-rule="evenodd" d="M 0.0 0.450000 L -0.389711 0.225000 L -0.389711 -0.225000 L 0.0 -0.450000 L 0.389711 -0.225000 L 0.389711 0.225000 Z " />
+</g>
+<g id="0xff21918c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21918c">
+<path id="grid.hexagon.136" class="mesh2" fill-rule="evenodd" d="M 0.433012 1.200000 L 0.043301 0.975000 L 0.043301 0.525000 L 0.433012 0.300000 L 0.822724 0.525000 L 0.822724 0.975000 Z " />
+</g>
+<g id="0xff21928c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21928c">
+<path id="grid.hexagon.137" class="mesh2" fill-rule="evenodd" d="M 0.817311 1.528125 L 0.661426 1.798125 L 0.505542 1.708125 L 0.505542 1.528125 Z M 0.817311 1.471874 L 0.505542 1.471874 L 0.505542 1.291875 L 0.661426 1.201874 Z M 0.866025 1.443750 L 0.710140 1.173749 L 0.866025 1.083750 L 1.021909 1.173749 Z M 0.914739 1.471874 L 1.070623 1.201874 L 1.226508 1.291875 L 1.226508 1.471874 Z M 0.914739 1.528125 L 1.226508 1.528125 L 1.226508 1.708125 L 1.070623 1.798125 Z M 0.866025 1.556250 L 1.021909 1.826250 L 0.866025 1.916250 L 0.710140 1.826250 Z " />
+</g>
+<g id="0xff21938b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21938b">
+<path id="grid.hexagon.138" class="mesh2" fill-rule="evenodd" d="M 1.299038 2.700000 L 0.909326 2.474999 L 0.909326 2.025000 L 1.299038 1.799999 L 1.688749 2.025000 L 1.688749 2.474999 Z " />
+</g>
+<g id="0xff20938b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#20938b">
+<path id="grid.hexagon.139" class="mesh2" fill-rule="evenodd" d="M 1.732050 3.450000 L 1.342339 3.224999 L 1.342339 2.775000 L 1.732050 2.549999 L 2.121762 2.775000 L 2.121762 3.224999 Z " />
+</g>
+<g id="0xff20948b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#20948b">
+<path id="grid.hexagon.140" class="mesh2" fill-rule="evenodd" d="M 2.116349 3.778125 L 1.960464 4.048124 L 1.804580 3.958124 L 1.804580 3.778125 Z M 2.116349 3.721874 L 1.804580 3.721874 L 1.804580 3.541875 L 1.960464 3.451874 Z M 2.165063 3.693749 L 2.009178 3.423749 L 2.165063 3.333750 L 2.320947 3.423749 Z M 2.213777 3.721874 L 2.369661 3.451874 L 2.525546 3.541875 L 2.525546 3.721874 Z M 2.213777 3.778125 L 2.525546 3.778125 L 2.525546 3.958124 L 2.369661 4.048124 Z M 2.165063 3.806250 L 2.320947 4.076249 L 2.165063 4.166249 L 2.009178 4.076249 Z " />
+</g>
+<g id="0xff20958b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#20958b">
+<path id="grid.hexagon.141" class="mesh2" fill-rule="evenodd" d="M 2.598076 4.949999 L 2.208364 4.724999 L 2.208364 4.275000 L 2.598076 4.050000 L 2.987787 4.275000 L 2.987787 4.724999 Z " />
+</g>
+<g id="0xff20968b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#20968b">
+<path id="grid.hexagon.142" class="mesh2" fill-rule="evenodd" d="M 3.031088 5.699999 L 2.641377 5.474999 L 2.641377 5.025000 L 3.031088 4.800000 L 3.420800 5.025000 L 3.420800 5.474999 Z " />
+</g>
+<g id="0xff1f978b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#1f978b">
+<path id="grid.hexagon.143" class="mesh2" fill-rule="evenodd" d="M 3.415387 6.028124 L 3.259503 6.298124 L 3.103618 6.208125 L 3.103618 6.028124 Z M 3.415387 5.971875 L 3.103618 5.971875 L 3.103618 5.791874 L 3.259503 5.701875 Z M 3.464101 5.943749 L 3.308217 5.673750 L 3.464101 5.583750 L 3.619986 5.673750 Z M 3.512815 5.971875 L 3.668699 5.701875 L 3.824584 5.791874 L 3.824584 5.971875 Z M 3.512815 6.028124 L 3.824584 6.028124 L 3.824584 6.208125 L 3.668699 6.298124 Z M 3.464101 6.056250 L 3.619986 6.326249 L 3.464101 6.416249 L 3.308217 6.326249 Z " />
+</g>
+<g id="0xff1f988a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#1f988a">
+<path id="grid.hexagon.144" class="mesh2" fill-rule="evenodd" d="M 3.897114 7.199999 L 3.507402 6.974999 L 3.507402 6.525000 L 3.897114 6.300000 L 4.286825 6.525000 L 4.286825 6.974999 Z " />
+</g>
+<g id="0xff1f998a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#1f998a">
+<path id="grid.hexagon.145" class="mesh2" fill-rule="evenodd" d="M -3.031088 -6.300000 L -3.420800 -6.525000 L -3.420800 -6.974999 L -3.031088 -7.199999 L -2.641377 -6.974999 L -2.641377 -6.525000 Z " />
+</g>
+<g id="0xff1f9a8a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#1f9a8a">
+<path id="grid.hexagon.146" class="mesh2" fill-rule="evenodd" d="M -2.646790 -5.971875 L -2.802674 -5.701875 L -2.958559 -5.791874 L -2.958559 -5.971875 Z M -2.646790 -6.028124 L -2.958559 -6.028124 L -2.958559 -6.208125 L -2.802674 -6.298124 Z M -2.598076 -6.056250 L -2.753960 -6.326249 L -2.598076 -6.416249 L -2.442191 -6.326249 Z M -2.549362 -6.028124 L -2.393477 -6.298124 L -2.237593 -6.208125 L -2.237593 -6.028124 Z M -2.549362 -5.971875 L -2.237593 -5.971875 L -2.237593 -5.791874 L -2.393477 -5.701875 Z M -2.598076 -5.943749 L -2.442191 -5.673750 L -2.598076 -5.583750 L -2.753960 -5.673750 Z " />
+</g>
+<g id="0xff209a89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#209a89">
+<path id="grid.hexagon.147" class="mesh2" fill-rule="evenodd" d="M -2.165063 -4.800000 L -2.554774 -5.025000 L -2.554774 -5.474999 L -2.165063 -5.699999 L -1.775352 -5.474999 L -1.775352 -5.025000 Z " />
+</g>
+<g id="0xff209b89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#209b89">
+<path id="grid.hexagon.148" class="mesh2" fill-rule="evenodd" d="M -1.732050 -4.050000 L -2.121762 -4.275000 L -2.121762 -4.724999 L -1.732050 -4.949999 L -1.342339 -4.724999 L -1.342339 -4.275000 Z " />
+</g>
+<g id="0xff209c89" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#209c89">
+<path id="grid.hexagon.149" class="mesh2" fill-rule="evenodd" d="M -1.347751 -3.721874 L -1.503636 -3.451874 L -1.659521 -3.541875 L -1.659521 -3.721874 Z M -1.347751 -3.778124 L -1.659521 -3.778125 L -1.659521 -3.958124 L -1.503636 -4.048124 Z M -1.299037 -3.806249 L -1.454922 -4.076249 L -1.299037 -4.166249 L -1.143153 -4.076249 Z M -1.250324 -3.778124 L -1.094439 -4.048124 L -0.938554 -3.958124 L -0.938554 -3.778125 Z M -1.250324 -3.721874 L -0.938554 -3.721874 L -0.938554 -3.541875 L -1.094439 -3.451874 Z M -1.299037 -3.693749 L -1.143153 -3.423749 L -1.299037 -3.333750 L -1.454922 -3.423749 Z " />
+</g>
+<g id="0xff209d88" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#209d88">
+<path id="grid.hexagon.150" class="mesh2" fill-rule="evenodd" d="M -0.866025 -2.549999 L -1.255736 -2.775000 L -1.255736 -3.224999 L -0.866025 -3.450000 L -0.476313 -3.224999 L -0.476313 -2.775000 Z " />
+</g>
+<g id="0xff219e88" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#219e88">
+<path id="grid.hexagon.151" class="mesh2" fill-rule="evenodd" d="M -0.433012 -1.799999 L -0.822724 -2.025000 L -0.822724 -2.474999 L -0.433012 -2.700000 L -0.043301 -2.474999 L -0.043301 -2.025000 Z " />
+</g>
+<g id="0xff219f88" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#219f88">
+<path id="grid.hexagon.152" class="mesh2" fill-rule="evenodd" d="M -0.048713 -1.471874 L -0.204598 -1.201874 L -0.360483 -1.291875 L -0.360483 -1.471874 Z M -0.048713 -1.528125 L -0.360483 -1.528125 L -0.360483 -1.708125 L -0.204598 -1.798125 Z M 0.0 -1.556250 L -0.155884 -1.826250 L 0.0 -1.916250 L 0.155884 -1.826250 Z M 0.048713 -1.528125 L 0.204598 -1.798125 L 0.360483 -1.708125 L 0.360483 -1.528125 Z M 0.048713 -1.471874 L 0.360483 -1.471874 L 0.360483 -1.291875 L 0.204598 -1.201874 Z M 0.0 -1.443750 L 0.155884 -1.173749 L 0.0 -1.083750 L -0.155884 -1.173749 Z " />
+</g>
+<g id="0xff21a087" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21a087">
+<path id="grid.hexagon.153" class="mesh2" fill-rule="evenodd" d="M 0.433012 -0.300000 L 0.043301 -0.525000 L 0.043301 -0.975000 L 0.433012 -1.200000 L 0.822724 -0.975000 L 0.822724 -0.525000 Z " />
+</g>
+<g id="0xff21a187" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#21a187">
+<path id="grid.hexagon.154" class="mesh2" fill-rule="evenodd" d="M 0.866025 0.450000 L 0.476313 0.225000 L 0.476313 -0.225000 L 0.866025 -0.450000 L 1.255736 -0.225000 L 1.255736 0.225000 Z " />
+</g>
+<g id="0xff22a286" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#22a286">
+<path id="grid.hexagon.155" class="mesh2" fill-rule="evenodd" d="M 1.250324 0.778125 L 1.094439 1.048125 L 0.938554 0.958125 L 0.938554 0.778125 Z M 1.250324 0.721875 L 0.938554 0.721875 L 0.938554 0.541874 L 1.094439 0.451874 Z M 1.299038 0.693750 L 1.143153 0.423750 L 1.299038 0.333750 L 1.454922 0.423750 Z M 1.347751 0.721875 L 1.503636 0.451874 L 1.659521 0.541874 L 1.659521 0.721875 Z M 1.347751 0.778125 L 1.659521 0.778125 L 1.659521 0.958125 L 1.503636 1.048125 Z M 1.299038 0.806250 L 1.454922 1.076250 L 1.299038 1.166249 L 1.143153 1.076250 Z " />
+</g>
+<g id="0xff22a286" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#22a286">
+<path id="grid.hexagon.156" class="mesh2" fill-rule="evenodd" d="M 1.732050 1.950000 L 1.342339 1.725000 L 1.342339 1.274999 L 1.732050 1.049999 L 2.121762 1.274999 L 2.121762 1.725000 Z " />
+</g>
+<g id="0xff22a386" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#22a386">
+<path id="grid.hexagon.157" class="mesh2" fill-rule="evenodd" d="M 2.165063 2.700000 L 1.775352 2.474999 L 1.775352 2.025000 L 2.165063 1.799999 L 2.554774 2.025000 L 2.554774 2.474999 Z " />
+</g>
+<g id="0xff22a485" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#22a485">
+<path id="grid.hexagon.158" class="mesh2" fill-rule="evenodd" d="M 2.549362 3.028125 L 2.393477 3.298125 L 2.237593 3.208124 L 2.237593 3.028125 Z M 2.549362 2.971875 L 2.237593 2.971875 L 2.237593 2.791875 L 2.393477 2.701874 Z M 2.598076 2.943750 L 2.442191 2.673749 L 2.598076 2.583750 L 2.753960 2.673749 Z M 2.646790 2.971875 L 2.802674 2.701874 L 2.958559 2.791875 L 2.958559 2.971875 Z M 2.646790 3.028125 L 2.958559 3.028125 L 2.958559 3.208124 L 2.802674 3.298125 Z M 2.598076 3.056250 L 2.753960 3.326250 L 2.598076 3.416249 L 2.442191 3.326250 Z " />
+</g>
+<g id="0xff23a585" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#23a585">
+<path id="grid.hexagon.159" class="mesh2" fill-rule="evenodd" d="M 3.031088 4.199999 L 2.641377 3.974999 L 2.641377 3.525000 L 3.031088 3.299999 L 3.420800 3.525000 L 3.420800 3.974999 Z " />
+</g>
+<g id="0xff23a685" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#23a685">
+<path id="grid.hexagon.160" class="mesh2" fill-rule="evenodd" d="M 3.464101 4.949999 L 3.074390 4.724999 L 3.074390 4.275000 L 3.464101 4.050000 L 3.853812 4.275000 L 3.853812 4.724999 Z " />
+</g>
+<g id="0xff23a784" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#23a784">
+<path id="grid.hexagon.161" class="mesh2" fill-rule="evenodd" d="M 3.848400 5.278124 L 3.692515 5.548124 L 3.536631 5.458125 L 3.536631 5.278124 Z M 3.848400 5.221875 L 3.536631 5.221875 L 3.536631 5.041874 L 3.692515 4.951875 Z M 3.897114 5.193749 L 3.741229 4.923750 L 3.897114 4.833750 L 4.052999 4.923750 Z M 3.945828 5.221875 L 4.101712 4.951875 L 4.257597 5.041874 L 4.257597 5.221875 Z M 3.945828 5.278124 L 4.257597 5.278124 L 4.257597 5.458125 L 4.101712 5.548124 Z M 3.897114 5.306250 L 4.052999 5.576249 L 3.897114 5.666249 L 3.741229 5.576249 Z " />
+</g>
+<g id="0xff24a884" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#24a884">
+<path id="grid.hexagon.162" class="mesh2" fill-rule="evenodd" d="M 4.330126 6.449999 L 3.940415 6.224999 L 3.940415 5.775000 L 4.330126 5.550000 L 4.719838 5.775000 L 4.719838 6.224999 Z " />
+</g>
+<g id="0xff25a983" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#25a983">
+<path id="grid.hexagon.163" class="mesh2" fill-rule="evenodd" d="M -2.165063 -6.300000 L -2.554774 -6.525000 L -2.554774 -6.974999 L -2.165063 -7.199999 L -1.775352 -6.974999 L -1.775352 -6.525000 Z " />
+</g>
+<g id="0xff26aa83" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#26aa83">
+<path id="grid.hexagon.164" class="mesh2" fill-rule="evenodd" d="M -1.780764 -5.971875 L -1.936649 -5.701875 L -2.092533 -5.791874 L -2.092533 -5.971875 Z M -1.780764 -6.028124 L -2.092533 -6.028124 L -2.092533 -6.208125 L -1.936649 -6.298124 Z M -1.732050 -6.056250 L -1.887935 -6.326249 L -1.732050 -6.416249 L -1.576166 -6.326249 Z M -1.683336 -6.028124 L -1.527452 -6.298124 L -1.371567 -6.208125 L -1.371567 -6.028124 Z M -1.683336 -5.971875 L -1.371567 -5.971875 L -1.371567 -5.791874 L -1.527452 -5.701875 Z M -1.732050 -5.943749 L -1.576166 -5.673750 L -1.732050 -5.583750 L -1.887935 -5.673750 Z " />
+</g>
+<g id="0xff27aa82" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#27aa82">
+<path id="grid.hexagon.165" class="mesh2" fill-rule="evenodd" d="M -1.299038 -4.800000 L -1.688749 -5.025000 L -1.688749 -5.474999 L -1.299038 -5.699999 L -0.909326 -5.474999 L -0.909326 -5.025000 Z " />
+</g>
+<g id="0xff28ab81" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#28ab81">
+<path id="grid.hexagon.166" class="mesh2" fill-rule="evenodd" d="M -0.866025 -4.050000 L -1.255736 -4.275000 L -1.255736 -4.724999 L -0.866025 -4.949999 L -0.476313 -4.724999 L -0.476313 -4.275000 Z " />
+</g>
+<g id="0xff29ac81" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#29ac81">
+<path id="grid.hexagon.167" class="mesh2" fill-rule="evenodd" d="M -0.481726 -3.721874 L -0.637611 -3.451874 L -0.793495 -3.541875 L -0.793495 -3.721874 Z M -0.481726 -3.778124 L -0.793495 -3.778125 L -0.793495 -3.958124 L -0.637611 -4.048124 Z M -0.433012 -3.806249 L -0.588897 -4.076249 L -0.433012 -4.166249 L -0.277128 -4.076249 Z M -0.384298 -3.778124 L -0.228414 -4.048124 L -0.072529 -3.958124 L -0.072529 -3.778125 Z M -0.384298 -3.721874 L -0.072529 -3.721874 L -0.072529 -3.541875 L -0.228414 -3.451874 Z M -0.433012 -3.693749 L -0.277128 -3.423749 L -0.433012 -3.333750 L -0.588897 -3.423749 Z " />
+</g>
+<g id="0xff2aad80" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2aad80">
+<path id="grid.hexagon.168" class="mesh2" fill-rule="evenodd" d="M 0.0 -2.549999 L -0.389711 -2.775000 L -0.389711 -3.224999 L 0.0 -3.450000 L 0.389711 -3.224999 L 0.389711 -2.775000 Z " />
+</g>
+<g id="0xff2bae7f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2bae7f">
+<path id="grid.hexagon.169" class="mesh2" fill-rule="evenodd" d="M 0.433012 -1.799999 L 0.043301 -2.025000 L 0.043301 -2.474999 L 0.433012 -2.700000 L 0.822724 -2.474999 L 0.822724 -2.025000 Z " />
+</g>
+<g id="0xff2caf7f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2caf7f">
+<path id="grid.hexagon.170" class="mesh2" fill-rule="evenodd" d="M 0.817311 -1.471874 L 0.661426 -1.201874 L 0.505542 -1.291875 L 0.505542 -1.471874 Z M 0.817311 -1.528125 L 0.505542 -1.528125 L 0.505542 -1.708125 L 0.661426 -1.798125 Z M 0.866025 -1.556250 L 0.710140 -1.826250 L 0.866025 -1.916250 L 1.021909 -1.826250 Z M 0.914739 -1.528125 L 1.070623 -1.798125 L 1.226508 -1.708125 L 1.226508 -1.528125 Z M 0.914739 -1.471874 L 1.226508 -1.471874 L 1.226508 -1.291875 L 1.070623 -1.201874 Z M 0.866025 -1.443750 L 1.021909 -1.173749 L 0.866025 -1.083750 L 0.710140 -1.173749 Z " />
+</g>
+<g id="0xff2daf7e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2daf7e">
+<path id="grid.hexagon.171" class="mesh2" fill-rule="evenodd" d="M 1.299038 -0.300000 L 0.909326 -0.525000 L 0.909326 -0.975000 L 1.299038 -1.200000 L 1.688749 -0.975000 L 1.688749 -0.525000 Z " />
+</g>
+<g id="0xff2eb07e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2eb07e">
+<path id="grid.hexagon.172" class="mesh2" fill-rule="evenodd" d="M 1.732050 0.450000 L 1.342339 0.225000 L 1.342339 -0.225000 L 1.732050 -0.450000 L 2.121762 -0.225000 L 2.121762 0.225000 Z " />
+</g>
+<g id="0xff2fb17d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#2fb17d">
+<path id="grid.hexagon.173" class="mesh2" fill-rule="evenodd" d="M 2.116349 0.778125 L 1.960464 1.048125 L 1.804580 0.958125 L 1.804580 0.778125 Z M 2.116349 0.721875 L 1.804580 0.721875 L 1.804580 0.541874 L 1.960464 0.451874 Z M 2.165063 0.693750 L 2.009178 0.423750 L 2.165063 0.333750 L 2.320947 0.423750 Z M 2.213777 0.721875 L 2.369661 0.451874 L 2.525546 0.541874 L 2.525546 0.721875 Z M 2.213777 0.778125 L 2.525546 0.778125 L 2.525546 0.958125 L 2.369661 1.048125 Z M 2.165063 0.806250 L 2.320947 1.076250 L 2.165063 1.166249 L 2.009178 1.076250 Z " />
+</g>
+<g id="0xff30b27c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#30b27c">
+<path id="grid.hexagon.174" class="mesh2" fill-rule="evenodd" d="M 2.598076 1.950000 L 2.208364 1.725000 L 2.208364 1.274999 L 2.598076 1.049999 L 2.987787 1.274999 L 2.987787 1.725000 Z " />
+</g>
+<g id="0xff31b37c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#31b37c">
+<path id="grid.hexagon.175" class="mesh2" fill-rule="evenodd" d="M 3.031088 2.700000 L 2.641377 2.474999 L 2.641377 2.025000 L 3.031088 1.799999 L 3.420800 2.025000 L 3.420800 2.474999 Z " />
+</g>
+<g id="0xff32b47b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#32b47b">
+<path id="grid.hexagon.176" class="mesh2" fill-rule="evenodd" d="M 3.415387 3.028125 L 3.259503 3.298125 L 3.103618 3.208124 L 3.103618 3.028125 Z M 3.415387 2.971875 L 3.103618 2.971875 L 3.103618 2.791875 L 3.259503 2.701874 Z M 3.464101 2.943750 L 3.308217 2.673749 L 3.464101 2.583750 L 3.619986 2.673749 Z M 3.512815 2.971875 L 3.668699 2.701874 L 3.824584 2.791875 L 3.824584 2.971875 Z M 3.512815 3.028125 L 3.824584 3.028125 L 3.824584 3.208124 L 3.668699 3.298125 Z M 3.464101 3.056250 L 3.619986 3.326250 L 3.464101 3.416249 L 3.308217 3.326250 Z " />
+</g>
+<g id="0xff33b47a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#33b47a">
+<path id="grid.hexagon.177" class="mesh2" fill-rule="evenodd" d="M 3.897114 4.199999 L 3.507402 3.974999 L 3.507402 3.525000 L 3.897114 3.299999 L 4.286825 3.525000 L 4.286825 3.974999 Z " />
+</g>
+<g id="0xff34b57a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#34b57a">
+<path id="grid.hexagon.178" class="mesh2" fill-rule="evenodd" d="M 4.330126 4.949999 L 3.940415 4.724999 L 3.940415 4.275000 L 4.330126 4.050000 L 4.719838 4.275000 L 4.719838 4.724999 Z " />
+</g>
+<g id="0xff35b679" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#35b679">
+<path id="grid.hexagon.179" class="mesh2" fill-rule="evenodd" d="M 4.714426 5.278124 L 4.558541 5.548124 L 4.402656 5.458125 L 4.402656 5.278124 Z M 4.714426 5.221875 L 4.402656 5.221875 L 4.402656 5.041874 L 4.558541 4.951875 Z M 4.763139 5.193749 L 4.607254 4.923750 L 4.763139 4.833750 L 4.919024 4.923750 Z M 4.811853 5.221875 L 4.967738 4.951875 L 5.123622 5.041874 L 5.123622 5.221875 Z M 4.811853 5.278124 L 5.123622 5.278124 L 5.123622 5.458125 L 4.967738 5.548124 Z M 4.763139 5.306250 L 4.919024 5.576249 L 4.763139 5.666249 L 4.607254 5.576249 Z " />
+</g>
+<g id="0xff36b778" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#36b778">
+<path id="grid.hexagon.180" class="mesh2" fill-rule="evenodd" d="M -1.299038 -6.300000 L -1.688749 -6.525000 L -1.688749 -6.974999 L -1.299038 -7.199999 L -0.909326 -6.974999 L -0.909326 -6.525000 Z " />
+</g>
+<g id="0xff38b877" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#38b877">
+<path id="grid.hexagon.181" class="mesh2" fill-rule="evenodd" d="M -0.866025 -5.550000 L -1.255736 -5.775000 L -1.255736 -6.224999 L -0.866025 -6.449999 L -0.476314 -6.224999 L -0.476314 -5.775000 Z " />
+</g>
+<g id="0xff39b977" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#39b977">
+<path id="grid.hexagon.182" class="mesh2" fill-rule="evenodd" d="M -0.481726 -5.221875 L -0.637611 -4.951875 L -0.793495 -5.041874 L -0.793495 -5.221875 Z M -0.481726 -5.278124 L -0.793495 -5.278124 L -0.793495 -5.458125 L -0.637611 -5.548124 Z M -0.433012 -5.306250 L -0.588897 -5.576249 L -0.433012 -5.666249 L -0.277128 -5.576249 Z M -0.384298 -5.278124 L -0.228414 -5.548124 L -0.072529 -5.458125 L -0.072529 -5.278124 Z M -0.384298 -5.221875 L -0.072529 -5.221875 L -0.072529 -5.041874 L -0.228414 -4.951875 Z M -0.433012 -5.193749 L -0.277128 -4.923750 L -0.433012 -4.833750 L -0.588897 -4.923750 Z " />
+</g>
+<g id="0xff3bb976" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3bb976">
+<path id="grid.hexagon.183" class="mesh2" fill-rule="evenodd" d="M 0.0 -4.050000 L -0.389711 -4.275000 L -0.389711 -4.724999 L 0.0 -4.949999 L 0.389711 -4.724999 L 0.389711 -4.275000 Z " />
+</g>
+<g id="0xff3dba75" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3dba75">
+<path id="grid.hexagon.184" class="mesh2" fill-rule="evenodd" d="M 0.433012 -3.299999 L 0.043301 -3.525000 L 0.043301 -3.974999 L 0.433012 -4.199999 L 0.822724 -3.974999 L 0.822724 -3.525000 Z " />
+</g>
+<g id="0xff3fbb74" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#3fbb74">
+<path id="grid.hexagon.185" class="mesh2" fill-rule="evenodd" d="M 0.817311 -2.971874 L 0.661426 -2.701874 L 0.505542 -2.791875 L 0.505542 -2.971875 Z M 0.817311 -3.028124 L 0.505542 -3.028125 L 0.505542 -3.208124 L 0.661426 -3.298125 Z M 0.866025 -3.056249 L 0.710140 -3.326250 L 0.866025 -3.416249 L 1.021909 -3.326250 Z M 0.914739 -3.028124 L 1.070623 -3.298125 L 1.226508 -3.208124 L 1.226508 -3.028125 Z M 0.914739 -2.971874 L 1.226508 -2.971875 L 1.226508 -2.791875 L 1.070623 -2.701874 Z M 0.866025 -2.943749 L 1.021909 -2.673749 L 0.866025 -2.583750 L 0.710140 -2.673749 Z " />
+</g>
+<g id="0xff40bc73" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#40bc73">
+<path id="grid.hexagon.186" class="mesh2" fill-rule="evenodd" d="M 1.299038 -1.799999 L 0.909326 -2.025000 L 0.909326 -2.474999 L 1.299038 -2.700000 L 1.688749 -2.474999 L 1.688749 -2.025000 Z " />
+</g>
+<g id="0xff42bd72" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#42bd72">
+<path id="grid.hexagon.187" class="mesh2" fill-rule="evenodd" d="M 1.732050 -1.049999 L 1.342339 -1.274999 L 1.342339 -1.725000 L 1.732050 -1.950000 L 2.121762 -1.725000 L 2.121762 -1.274999 Z " />
+</g>
+<g id="0xff44bd71" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#44bd71">
+<path id="grid.hexagon.188" class="mesh2" fill-rule="evenodd" d="M 2.116349 -0.721875 L 1.960464 -0.451874 L 1.804580 -0.541874 L 1.804580 -0.721875 Z M 2.116349 -0.778125 L 1.804580 -0.778125 L 1.804580 -0.958125 L 1.960464 -1.048125 Z M 2.165063 -0.806250 L 2.009178 -1.076250 L 2.165063 -1.166249 L 2.320947 -1.076250 Z M 2.213777 -0.778125 L 2.369661 -1.048125 L 2.525546 -0.958125 L 2.525546 -0.778125 Z M 2.213777 -0.721875 L 2.525546 -0.721875 L 2.525546 -0.541874 L 2.369661 -0.451874 Z M 2.165063 -0.693750 L 2.320947 -0.423750 L 2.165063 -0.333750 L 2.009178 -0.423750 Z " />
+</g>
+<g id="0xff45be70" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#45be70">
+<path id="grid.hexagon.189" class="mesh2" fill-rule="evenodd" d="M 2.598076 0.450000 L 2.208364 0.225000 L 2.208364 -0.225000 L 2.598076 -0.450000 L 2.987787 -0.225000 L 2.987787 0.225000 Z " />
+</g>
+<g id="0xff47bf6f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#47bf6f">
+<path id="grid.hexagon.190" class="mesh2" fill-rule="evenodd" d="M 3.031088 1.200000 L 2.641377 0.975000 L 2.641377 0.525000 L 3.031088 0.300000 L 3.420800 0.525000 L 3.420800 0.975000 Z " />
+</g>
+<g id="0xff49c06f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#49c06f">
+<path id="grid.hexagon.191" class="mesh2" fill-rule="evenodd" d="M 3.415387 1.528125 L 3.259503 1.798125 L 3.103618 1.708125 L 3.103618 1.528125 Z M 3.415387 1.471874 L 3.103618 1.471874 L 3.103618 1.291875 L 3.259503 1.201874 Z M 3.464101 1.443750 L 3.308217 1.173749 L 3.464101 1.083750 L 3.619986 1.173749 Z M 3.512815 1.471874 L 3.668699 1.201874 L 3.824584 1.291875 L 3.824584 1.471874 Z M 3.512815 1.528125 L 3.824584 1.528125 L 3.824584 1.708125 L 3.668699 1.798125 Z M 3.464101 1.556250 L 3.619986 1.826250 L 3.464101 1.916250 L 3.308217 1.826250 Z " />
+</g>
+<g id="0xff4ac16e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#4ac16e">
+<path id="grid.hexagon.192" class="mesh2" fill-rule="evenodd" d="M 3.897114 2.700000 L 3.507402 2.474999 L 3.507402 2.025000 L 3.897114 1.799999 L 4.286825 2.025000 L 4.286825 2.474999 Z " />
+</g>
+<g id="0xff4cc16d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#4cc16d">
+<path id="grid.hexagon.193" class="mesh2" fill-rule="evenodd" d="M 4.330126 3.450000 L 3.940415 3.224999 L 3.940415 2.775000 L 4.330126 2.549999 L 4.719838 2.775000 L 4.719838 3.224999 Z " />
+</g>
+<g id="0xff4dc26c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#4dc26c">
+<path id="grid.hexagon.194" class="mesh2" fill-rule="evenodd" d="M 4.714426 3.778125 L 4.558541 4.048124 L 4.402656 3.958124 L 4.402656 3.778125 Z M 4.714426 3.721874 L 4.402656 3.721874 L 4.402656 3.541875 L 4.558541 3.451874 Z M 4.763139 3.693749 L 4.607254 3.423749 L 4.763139 3.333750 L 4.919024 3.423749 Z M 4.811853 3.721874 L 4.967738 3.451874 L 5.123622 3.541875 L 5.123622 3.721874 Z M 4.811853 3.778125 L 5.123622 3.778125 L 5.123622 3.958124 L 4.967738 4.048124 Z M 4.763139 3.806250 L 4.919024 4.076249 L 4.763139 4.166249 L 4.607254 4.076249 Z " />
+</g>
+<g id="0xff4fc36b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#4fc36b">
+<path id="grid.hexagon.195" class="mesh2" fill-rule="evenodd" d="M 5.196152 4.949999 L 4.806440 4.724999 L 4.806440 4.275000 L 5.196152 4.050000 L 5.585863 4.275000 L 5.585863 4.724999 Z " />
+</g>
+<g id="0xff50c46a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#50c46a">
+<path id="grid.hexagon.196" class="mesh2" fill-rule="evenodd" d="M -0.433012 -6.300000 L -0.822724 -6.525000 L -0.822724 -6.974999 L -0.433012 -7.199999 L -0.043301 -6.974999 L -0.043301 -6.525000 Z " />
+</g>
+<g id="0xff52c469" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#52c469">
+<path id="grid.hexagon.197" class="mesh2" fill-rule="evenodd" d="M -0.048713 -5.971875 L -0.204598 -5.701875 L -0.360483 -5.791874 L -0.360483 -5.971875 Z M -0.048713 -6.028124 L -0.360483 -6.028124 L -0.360483 -6.208125 L -0.204598 -6.298124 Z M 0.0 -6.056250 L -0.155884 -6.326249 L 0.0 -6.416249 L 0.155884 -6.326249 Z M 0.048713 -6.028124 L 0.204598 -6.298124 L 0.360483 -6.208125 L 0.360483 -6.028124 Z M 0.048713 -5.971875 L 0.360483 -5.971875 L 0.360483 -5.791874 L 0.204598 -5.701875 Z M 0.0 -5.943749 L 0.155884 -5.673750 L 0.0 -5.583750 L -0.155884 -5.673750 Z " />
+</g>
+<g id="0xff53c568" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#53c568">
+<path id="grid.hexagon.198" class="mesh2" fill-rule="evenodd" d="M 0.433012 -4.800000 L 0.043301 -5.025000 L 0.043301 -5.474999 L 0.433012 -5.699999 L 0.822724 -5.474999 L 0.822724 -5.025000 Z " />
+</g>
+<g id="0xff56c667" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#56c667">
+<path id="grid.hexagon.199" class="mesh2" fill-rule="evenodd" d="M 0.866025 -4.050000 L 0.476314 -4.275000 L 0.476314 -4.724999 L 0.866025 -4.949999 L 1.255736 -4.724999 L 1.255736 -4.275000 Z " />
+</g>
+<g id="0xff58c766" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#58c766">
+<path id="grid.hexagon.200" class="mesh2" fill-rule="evenodd" d="M 1.250324 -3.721874 L 1.094439 -3.451874 L 0.938555 -3.541875 L 0.938555 -3.721874 Z M 1.250324 -3.778124 L 0.938555 -3.778125 L 0.938555 -3.958124 L 1.094439 -4.048124 Z M 1.299038 -3.806249 L 1.143153 -4.076249 L 1.299038 -4.166249 L 1.454922 -4.076249 Z M 1.347752 -3.778124 L 1.503636 -4.048124 L 1.659521 -3.958124 L 1.659521 -3.778125 Z M 1.347752 -3.721874 L 1.659521 -3.721874 L 1.659521 -3.541875 L 1.503636 -3.451874 Z M 1.299038 -3.693749 L 1.454922 -3.423749 L 1.299038 -3.333750 L 1.143153 -3.423749 Z " />
+</g>
+<g id="0xff5ac764" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#5ac764">
+<path id="grid.hexagon.201" class="mesh2" fill-rule="evenodd" d="M 1.732050 -2.549999 L 1.342339 -2.775000 L 1.342339 -3.224999 L 1.732050 -3.450000 L 2.121762 -3.224999 L 2.121762 -2.775000 Z " />
+</g>
+<g id="0xff5dc863" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#5dc863">
+<path id="grid.hexagon.202" class="mesh2" fill-rule="evenodd" d="M 2.165063 -1.799999 L 1.775352 -2.025000 L 1.775352 -2.474999 L 2.165063 -2.700000 L 2.554774 -2.474999 L 2.554774 -2.025000 Z " />
+</g>
+<g id="0xff5fc962" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#5fc962">
+<path id="grid.hexagon.203" class="mesh2" fill-rule="evenodd" d="M 2.549362 -1.471874 L 2.393477 -1.201874 L 2.237593 -1.291875 L 2.237593 -1.471874 Z M 2.549362 -1.528125 L 2.237593 -1.528125 L 2.237593 -1.708125 L 2.393477 -1.798125 Z M 2.598076 -1.556250 L 2.442191 -1.826250 L 2.598076 -1.916250 L 2.753960 -1.826250 Z M 2.646790 -1.528125 L 2.802674 -1.798125 L 2.958559 -1.708125 L 2.958559 -1.528125 Z M 2.646790 -1.471874 L 2.958559 -1.471874 L 2.958559 -1.291875 L 2.802674 -1.201874 Z M 2.598076 -1.443750 L 2.753960 -1.173749 L 2.598076 -1.083750 L 2.442191 -1.173749 Z " />
+</g>
+<g id="0xff61c961" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#61c961">
+<path id="grid.hexagon.204" class="mesh2" fill-rule="evenodd" d="M 3.031088 -0.300000 L 2.641377 -0.525000 L 2.641377 -0.975000 L 3.031088 -1.200000 L 3.420800 -0.975000 L 3.420800 -0.525000 Z " />
+</g>
+<g id="0xff63ca5f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#63ca5f">
+<path id="grid.hexagon.205" class="mesh2" fill-rule="evenodd" d="M 3.464101 0.450000 L 3.074390 0.225000 L 3.074390 -0.225000 L 3.464101 -0.450000 L 3.853812 -0.225000 L 3.853812 0.225000 Z " />
+</g>
+<g id="0xff66cb5e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#66cb5e">
+<path id="grid.hexagon.206" class="mesh2" fill-rule="evenodd" d="M 3.848400 0.778125 L 3.692515 1.048125 L 3.536631 0.958125 L 3.536631 0.778125 Z M 3.848400 0.721875 L 3.536631 0.721875 L 3.536631 0.541874 L 3.692515 0.451874 Z M 3.897114 0.693750 L 3.741229 0.423750 L 3.897114 0.333750 L 4.052999 0.423750 Z M 3.945828 0.721875 L 4.101712 0.451874 L 4.257597 0.541874 L 4.257597 0.721875 Z M 3.945828 0.778125 L 4.257597 0.778125 L 4.257597 0.958125 L 4.101712 1.048125 Z M 3.897114 0.806250 L 4.052999 1.076250 L 3.897114 1.166249 L 3.741229 1.076250 Z " />
+</g>
+<g id="0xff68cb5d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#68cb5d">
+<path id="grid.hexagon.207" class="mesh2" fill-rule="evenodd" d="M 4.330126 1.950000 L 3.940415 1.725000 L 3.940415 1.274999 L 4.330126 1.049999 L 4.719838 1.274999 L 4.719838 1.725000 Z " />
+</g>
+<g id="0xff6acc5c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#6acc5c">
+<path id="grid.hexagon.208" class="mesh2" fill-rule="evenodd" d="M 4.763139 2.700000 L 4.373428 2.474999 L 4.373428 2.025000 L 4.763139 1.799999 L 5.152851 2.025000 L 5.152851 2.474999 Z " />
+</g>
+<g id="0xff6ccd5a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#6ccd5a">
+<path id="grid.hexagon.209" class="mesh2" fill-rule="evenodd" d="M 5.147438 3.028125 L 4.991553 3.298125 L 4.835669 3.208124 L 4.835669 3.028125 Z M 5.147438 2.971875 L 4.835669 2.971875 L 4.835669 2.791875 L 4.991553 2.701874 Z M 5.196152 2.943750 L 5.040267 2.673749 L 5.196152 2.583750 L 5.352036 2.673749 Z M 5.244865 2.971875 L 5.400750 2.701874 L 5.556635 2.791875 L 5.556635 2.971875 Z M 5.244866 3.028125 L 5.556635 3.028125 L 5.556635 3.208124 L 5.400750 3.298125 Z M 5.196152 3.056250 L 5.352036 3.326250 L 5.196152 3.416249 L 5.040267 3.326250 Z " />
+</g>
+<g id="0xff6ece59" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#6ece59">
+<path id="grid.hexagon.210" class="mesh2" fill-rule="evenodd" d="M 5.629164 4.199999 L 5.239453 3.974999 L 5.239453 3.525000 L 5.629164 3.299999 L 6.018876 3.525000 L 6.018876 3.974999 Z " />
+</g>
+<g id="0xff70ce58" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#70ce58">
+<path id="grid.hexagon.211" class="mesh2" fill-rule="evenodd" d="M 0.433012 -6.300000 L 0.043301 -6.525000 L 0.043301 -6.974999 L 0.433012 -7.199999 L 0.822723 -6.974999 L 0.822723 -6.525000 Z " />
+</g>
+<g id="0xff72cf56" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#72cf56">
+<path id="grid.hexagon.212" class="mesh2" fill-rule="evenodd" d="M 0.817311 -5.971875 L 0.661426 -5.701875 L 0.505542 -5.791874 L 0.505542 -5.971875 Z M 0.817311 -6.028124 L 0.505542 -6.028124 L 0.505542 -6.208125 L 0.661426 -6.298124 Z M 0.866025 -6.056250 L 0.710140 -6.326249 L 0.866025 -6.416249 L 1.021909 -6.326249 Z M 0.914739 -6.028124 L 1.070623 -6.298124 L 1.226508 -6.208125 L 1.226508 -6.028124 Z M 0.914739 -5.971875 L 1.226508 -5.971875 L 1.226508 -5.791874 L 1.070623 -5.701875 Z M 0.866025 -5.943749 L 1.021909 -5.673750 L 0.866025 -5.583750 L 0.710140 -5.673750 Z " />
+</g>
+<g id="0xff74d055" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#74d055">
+<path id="grid.hexagon.213" class="mesh2" fill-rule="evenodd" d="M 1.299037 -4.800000 L 0.909326 -5.025000 L 0.909326 -5.474999 L 1.299037 -5.699999 L 1.688749 -5.474999 L 1.688749 -5.025000 Z " />
+</g>
+<g id="0xff76d054" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#76d054">
+<path id="grid.hexagon.214" class="mesh2" fill-rule="evenodd" d="M 1.732050 -4.050000 L 1.342339 -4.275000 L 1.342339 -4.724999 L 1.732050 -4.949999 L 2.121762 -4.724999 L 2.121762 -4.275000 Z " />
+</g>
+<g id="0xff78d152" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#78d152">
+<path id="grid.hexagon.215" class="mesh2" fill-rule="evenodd" d="M 2.116349 -3.721874 L 1.960464 -3.451874 L 1.804580 -3.541875 L 1.804580 -3.721874 Z M 2.116349 -3.778124 L 1.804580 -3.778125 L 1.804580 -3.958124 L 1.960464 -4.048124 Z M 2.165063 -3.806249 L 2.009178 -4.076249 L 2.165063 -4.166249 L 2.320947 -4.076249 Z M 2.213777 -3.778124 L 2.369661 -4.048124 L 2.525546 -3.958124 L 2.525546 -3.778125 Z M 2.213777 -3.721874 L 2.525546 -3.721874 L 2.525546 -3.541875 L 2.369661 -3.451874 Z M 2.165063 -3.693749 L 2.320947 -3.423749 L 2.165063 -3.333750 L 2.009178 -3.423749 Z " />
+</g>
+<g id="0xff7ad251" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#7ad251">
+<path id="grid.hexagon.216" class="mesh2" fill-rule="evenodd" d="M 2.598075 -2.549999 L 2.208364 -2.775000 L 2.208364 -3.224999 L 2.598075 -3.450000 L 2.987787 -3.224999 L 2.987787 -2.775000 Z " />
+</g>
+<g id="0xff7cd24f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#7cd24f">
+<path id="grid.hexagon.217" class="mesh2" fill-rule="evenodd" d="M 3.031088 -1.799999 L 2.641377 -2.025000 L 2.641377 -2.474999 L 3.031088 -2.700000 L 3.420800 -2.474999 L 3.420800 -2.025000 Z " />
+</g>
+<g id="0xff7fd34e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#7fd34e">
+<path id="grid.hexagon.218" class="mesh2" fill-rule="evenodd" d="M 3.415387 -1.471874 L 3.259502 -1.201874 L 3.103618 -1.291875 L 3.103618 -1.471874 Z M 3.415387 -1.528125 L 3.103618 -1.528125 L 3.103618 -1.708125 L 3.259502 -1.798125 Z M 3.464101 -1.556250 L 3.308216 -1.826250 L 3.464101 -1.916250 L 3.619985 -1.826250 Z M 3.512815 -1.528125 L 3.668699 -1.798125 L 3.824584 -1.708125 L 3.824584 -1.528125 Z M 3.512815 -1.471874 L 3.824584 -1.471874 L 3.824584 -1.291875 L 3.668699 -1.201874 Z M 3.464101 -1.443750 L 3.619985 -1.173749 L 3.464101 -1.083750 L 3.308216 -1.173749 Z " />
+</g>
+<g id="0xff82d34d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#82d34d">
+<path id="grid.hexagon.219" class="mesh2" fill-rule="evenodd" d="M 3.897113 -0.300000 L 3.507402 -0.525000 L 3.507402 -0.975000 L 3.897113 -1.200000 L 4.286825 -0.975000 L 4.286825 -0.525000 Z " />
+</g>
+<g id="0xff84d44b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#84d44b">
+<path id="grid.hexagon.220" class="mesh2" fill-rule="evenodd" d="M 4.330126 0.450000 L 3.940415 0.225000 L 3.940415 -0.225000 L 4.330126 -0.450000 L 4.719838 -0.225000 L 4.719838 0.225000 Z " />
+</g>
+<g id="0xff87d44a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#87d44a">
+<path id="grid.hexagon.221" class="mesh2" fill-rule="evenodd" d="M 4.714425 0.778125 L 4.558540 1.048125 L 4.402656 0.958125 L 4.402656 0.778125 Z M 4.714425 0.721875 L 4.402656 0.721875 L 4.402656 0.541874 L 4.558540 0.451874 Z M 4.763139 0.693750 L 4.607254 0.423750 L 4.763139 0.333750 L 4.919023 0.423750 Z M 4.811853 0.721875 L 4.967737 0.451874 L 5.123622 0.541874 L 5.123622 0.721875 Z M 4.811853 0.778125 L 5.123622 0.778125 L 5.123622 0.958125 L 4.967737 1.048125 Z M 4.763139 0.806250 L 4.919023 1.076250 L 4.763139 1.166249 L 4.607254 1.076250 Z " />
+</g>
+<g id="0xff89d549" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#89d549">
+<path id="grid.hexagon.222" class="mesh2" fill-rule="evenodd" d="M 5.196152 1.950000 L 4.806440 1.725000 L 4.806440 1.274999 L 5.196152 1.049999 L 5.585863 1.274999 L 5.585863 1.725000 Z " />
+</g>
+<g id="0xff8cd547" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#8cd547">
+<path id="grid.hexagon.223" class="mesh2" fill-rule="evenodd" d="M 5.629164 2.700000 L 5.239453 2.474999 L 5.239453 2.025000 L 5.629164 1.799999 L 6.018876 2.025000 L 6.018876 2.474999 Z " />
+</g>
+<g id="0xff8ed646" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#8ed646">
+<path id="grid.hexagon.224" class="mesh2" fill-rule="evenodd" d="M 6.013463 3.028125 L 5.857579 3.298125 L 5.701694 3.208124 L 5.701694 3.028125 Z M 6.013463 2.971875 L 5.701694 2.971875 L 5.701694 2.791875 L 5.857579 2.701874 Z M 6.062177 2.943750 L 5.906292 2.673749 L 6.062177 2.583750 L 6.218062 2.673749 Z M 6.110891 2.971875 L 6.266776 2.701874 L 6.422660 2.791875 L 6.422660 2.971875 Z M 6.110891 3.028125 L 6.422660 3.028125 L 6.422660 3.208124 L 6.266776 3.298125 Z M 6.062177 3.056250 L 6.218062 3.326250 L 6.062177 3.416249 L 5.906292 3.326250 Z " />
+</g>
+<g id="0xff91d644" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#91d644">
+<path id="grid.hexagon.225" class="mesh2" fill-rule="evenodd" d="M 1.299037 -6.300000 L 0.909326 -6.525000 L 0.909326 -6.974999 L 1.299037 -7.199999 L 1.688749 -6.974999 L 1.688749 -6.525000 Z " />
+</g>
+<g id="0xff93d743" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#93d743">
+<path id="grid.hexagon.226" class="mesh2" fill-rule="evenodd" d="M 1.732050 -5.550000 L 1.342339 -5.775000 L 1.342339 -6.224999 L 1.732050 -6.449999 L 2.121762 -6.224999 L 2.121762 -5.775000 Z " />
+</g>
+<g id="0xff95d741" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#95d741">
+<path id="grid.hexagon.227" class="mesh2" fill-rule="evenodd" d="M 2.116349 -5.221875 L 1.960464 -4.951875 L 1.804580 -5.041874 L 1.804580 -5.221875 Z M 2.116349 -5.278124 L 1.804580 -5.278124 L 1.804580 -5.458125 L 1.960464 -5.548124 Z M 2.165063 -5.306250 L 2.009178 -5.576249 L 2.165063 -5.666249 L 2.320947 -5.576249 Z M 2.213777 -5.278124 L 2.369661 -5.548124 L 2.525546 -5.458125 L 2.525546 -5.278124 Z M 2.213777 -5.221875 L 2.525546 -5.221875 L 2.525546 -5.041874 L 2.369661 -4.951875 Z M 2.165063 -5.193749 L 2.320947 -4.923750 L 2.165063 -4.833750 L 2.009178 -4.923750 Z " />
+</g>
+<g id="0xff98d840" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#98d840">
+<path id="grid.hexagon.228" class="mesh2" fill-rule="evenodd" d="M 2.598076 -4.050000 L 2.208364 -4.275000 L 2.208364 -4.724999 L 2.598076 -4.949999 L 2.987787 -4.724999 L 2.987787 -4.275000 Z " />
+</g>
+<g id="0xff9ad83e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#9ad83e">
+<path id="grid.hexagon.229" class="mesh2" fill-rule="evenodd" d="M 3.031088 -3.299999 L 2.641377 -3.525000 L 2.641377 -3.974999 L 3.031088 -4.199999 L 3.420800 -3.974999 L 3.420800 -3.525000 Z " />
+</g>
+<g id="0xff9cd93c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#9cd93c">
+<path id="grid.hexagon.230" class="mesh2" fill-rule="evenodd" d="M 3.415387 -2.971874 L 3.259502 -2.701874 L 3.103618 -2.791875 L 3.103618 -2.971875 Z M 3.415387 -3.028124 L 3.103618 -3.028125 L 3.103618 -3.208124 L 3.259502 -3.298125 Z M 3.464101 -3.056249 L 3.308216 -3.326250 L 3.464101 -3.416249 L 3.619985 -3.326250 Z M 3.512815 -3.028124 L 3.668699 -3.298125 L 3.824584 -3.208124 L 3.824584 -3.028125 Z M 3.512815 -2.971874 L 3.824584 -2.971875 L 3.824584 -2.791875 L 3.668699 -2.701874 Z M 3.464101 -2.943749 L 3.619985 -2.673749 L 3.464101 -2.583750 L 3.308216 -2.673749 Z " />
+</g>
+<g id="0xff9fd93b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#9fd93b">
+<path id="grid.hexagon.231" class="mesh2" fill-rule="evenodd" d="M 3.897114 -1.799999 L 3.507402 -2.025000 L 3.507402 -2.474999 L 3.897114 -2.700000 L 4.286825 -2.474999 L 4.286825 -2.025000 Z " />
+</g>
+<g id="0xffa1da39" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#a1da39">
+<path id="grid.hexagon.232" class="mesh2" fill-rule="evenodd" d="M 4.330126 -1.049999 L 3.940415 -1.274999 L 3.940415 -1.725000 L 4.330126 -1.950000 L 4.719838 -1.725000 L 4.719838 -1.274999 Z " />
+</g>
+<g id="0xffa3da37" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#a3da37">
+<path id="grid.hexagon.233" class="mesh2" fill-rule="evenodd" d="M 4.714426 -0.721875 L 4.558541 -0.451874 L 4.402656 -0.541874 L 4.402656 -0.721875 Z M 4.714426 -0.778125 L 4.402656 -0.778125 L 4.402656 -0.958125 L 4.558541 -1.048125 Z M 4.763139 -0.806250 L 4.607254 -1.076250 L 4.763139 -1.166249 L 4.919024 -1.076250 Z M 4.811853 -0.778125 L 4.967738 -1.048125 L 5.123622 -0.958125 L 5.123622 -0.778125 Z M 4.811853 -0.721875 L 5.123622 -0.721875 L 5.123622 -0.541874 L 4.967738 -0.451874 Z M 4.763139 -0.693750 L 4.919024 -0.423750 L 4.763139 -0.333750 L 4.607254 -0.423750 Z " />
+</g>
+<g id="0xffa5db35" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#a5db35">
+<path id="grid.hexagon.234" class="mesh2" fill-rule="evenodd" d="M 5.196152 0.450000 L 4.806440 0.225000 L 4.806440 -0.225000 L 5.196152 -0.450000 L 5.585863 -0.225000 L 5.585863 0.225000 Z " />
+</g>
+<g id="0xffa8db34" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#a8db34">
+<path id="grid.hexagon.235" class="mesh2" fill-rule="evenodd" d="M 5.629164 1.200000 L 5.239453 0.975000 L 5.239453 0.525000 L 5.629164 0.300000 L 6.018876 0.525000 L 6.018876 0.975000 Z " />
+</g>
+<g id="0xffabdc33" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#abdc33">
+<path id="grid.hexagon.236" class="mesh2" fill-rule="evenodd" d="M 6.013463 1.528125 L 5.857579 1.798125 L 5.701694 1.708125 L 5.701694 1.528125 Z M 6.013463 1.471874 L 5.701694 1.471874 L 5.701694 1.291875 L 5.857579 1.201874 Z M 6.062177 1.443750 L 5.906292 1.173749 L 6.062177 1.083750 L 6.218062 1.173749 Z M 6.110891 1.471874 L 6.266776 1.201874 L 6.422660 1.291875 L 6.422660 1.471874 Z M 6.110891 1.528125 L 6.422660 1.528125 L 6.422660 1.708125 L 6.266776 1.798125 Z M 6.062177 1.556250 L 6.218062 1.826250 L 6.062177 1.916250 L 5.906292 1.826250 Z " />
+</g>
+<g id="0xffaddc32" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#addc32">
+<path id="grid.hexagon.237" class="mesh2" fill-rule="evenodd" d="M 6.495190 2.700000 L 6.105478 2.474999 L 6.105478 2.025000 L 6.495190 1.799999 L 6.884901 2.025000 L 6.884901 2.474999 Z " />
+</g>
+<g id="0xffb0dc31" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#b0dc31">
+<path id="grid.hexagon.238" class="mesh2" fill-rule="evenodd" d="M 2.165063 -6.300000 L 1.775352 -6.525000 L 1.775352 -6.974999 L 2.165063 -7.199999 L 2.554774 -6.974999 L 2.554774 -6.525000 Z " />
+</g>
+<g id="0xffb2dd30" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#b2dd30">
+<path id="grid.hexagon.239" class="mesh2" fill-rule="evenodd" d="M 2.549362 -5.971875 L 2.393477 -5.701875 L 2.237593 -5.791874 L 2.237593 -5.971875 Z M 2.549362 -6.028124 L 2.237593 -6.028124 L 2.237593 -6.208125 L 2.393477 -6.298124 Z M 2.598076 -6.056250 L 2.442191 -6.326249 L 2.598076 -6.416249 L 2.753960 -6.326249 Z M 2.646790 -6.028124 L 2.802674 -6.298124 L 2.958559 -6.208125 L 2.958559 -6.028124 Z M 2.646790 -5.971875 L 2.958559 -5.971875 L 2.958559 -5.791874 L 2.802674 -5.701875 Z M 2.598076 -5.943749 L 2.753960 -5.673750 L 2.598076 -5.583750 L 2.442191 -5.673750 Z " />
+</g>
+<g id="0xffb5dd2f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#b5dd2f">
+<path id="grid.hexagon.240" class="mesh2" fill-rule="evenodd" d="M 3.031088 -4.800000 L 2.641377 -5.025000 L 2.641377 -5.474999 L 3.031088 -5.699999 L 3.420800 -5.474999 L 3.420800 -5.025000 Z " />
+</g>
+<g id="0xffb8de2e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#b8de2e">
+<path id="grid.hexagon.241" class="mesh2" fill-rule="evenodd" d="M 3.464101 -4.050000 L 3.074390 -4.275000 L 3.074390 -4.724999 L 3.464101 -4.949999 L 3.853812 -4.724999 L 3.853812 -4.275000 Z " />
+</g>
+<g id="0xffbade2c" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#bade2c">
+<path id="grid.hexagon.242" class="mesh2" fill-rule="evenodd" d="M 3.848400 -3.721874 L 3.692515 -3.451874 L 3.536631 -3.541875 L 3.536631 -3.721874 Z M 3.848400 -3.778124 L 3.536631 -3.778125 L 3.536631 -3.958124 L 3.692515 -4.048124 Z M 3.897114 -3.806249 L 3.741229 -4.076249 L 3.897114 -4.166249 L 4.052999 -4.076249 Z M 3.945828 -3.778124 L 4.101712 -4.048124 L 4.257597 -3.958124 L 4.257597 -3.778125 Z M 3.945828 -3.721874 L 4.257597 -3.721874 L 4.257597 -3.541875 L 4.101712 -3.451874 Z M 3.897114 -3.693749 L 4.052999 -3.423749 L 3.897114 -3.333750 L 3.741229 -3.423749 Z " />
+</g>
+<g id="0xffbdde2b" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#bdde2b">
+<path id="grid.hexagon.243" class="mesh2" fill-rule="evenodd" d="M 4.330126 -2.549999 L 3.940415 -2.775000 L 3.940415 -3.224999 L 4.330126 -3.450000 L 4.719838 -3.224999 L 4.719838 -2.775000 Z " />
+</g>
+<g id="0xffbfdf2a" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#bfdf2a">
+<path id="grid.hexagon.244" class="mesh2" fill-rule="evenodd" d="M 4.763139 -1.799999 L 4.373428 -2.025000 L 4.373428 -2.474999 L 4.763139 -2.700000 L 5.152851 -2.474999 L 5.152851 -2.025000 Z " />
+</g>
+<g id="0xffc2df28" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#c2df28">
+<path id="grid.hexagon.245" class="mesh2" fill-rule="evenodd" d="M 5.147438 -1.471874 L 4.991553 -1.201874 L 4.835669 -1.291875 L 4.835669 -1.471874 Z M 5.147438 -1.528125 L 4.835669 -1.528125 L 4.835669 -1.708125 L 4.991553 -1.798125 Z M 5.196152 -1.556250 L 5.040267 -1.826250 L 5.196152 -1.916250 L 5.352036 -1.826250 Z M 5.244865 -1.528125 L 5.400750 -1.798125 L 5.556635 -1.708125 L 5.556635 -1.528125 Z M 5.244866 -1.471874 L 5.556635 -1.471874 L 5.556635 -1.291875 L 5.400750 -1.201874 Z M 5.196152 -1.443750 L 5.352036 -1.173749 L 5.196152 -1.083750 L 5.040267 -1.173749 Z " />
+</g>
+<g id="0xffc4df27" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#c4df27">
+<path id="grid.hexagon.246" class="mesh2" fill-rule="evenodd" d="M 5.629165 -0.300000 L 5.239453 -0.525000 L 5.239453 -0.975000 L 5.629165 -1.200000 L 6.018876 -0.975000 L 6.018876 -0.525000 Z " />
+</g>
+<g id="0xffc6e026" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#c6e026">
+<path id="grid.hexagon.247" class="mesh2" fill-rule="evenodd" d="M 6.062177 0.450000 L 5.672466 0.225000 L 5.672466 -0.225000 L 6.062177 -0.450000 L 6.451889 -0.225000 L 6.451889 0.225000 Z " />
+</g>
+<g id="0xffc9e024" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#c9e024">
+<path id="grid.hexagon.248" class="mesh2" fill-rule="evenodd" d="M 6.446476 0.778125 L 6.290591 1.048125 L 6.134706 0.958125 L 6.134706 0.778125 Z M 6.446476 0.721875 L 6.134706 0.721875 L 6.134706 0.541874 L 6.290591 0.451874 Z M 6.495190 0.693750 L 6.339305 0.423750 L 6.495190 0.333750 L 6.651074 0.423750 Z M 6.543904 0.721875 L 6.699788 0.451874 L 6.855673 0.541874 L 6.855673 0.721875 Z M 6.543904 0.778125 L 6.855673 0.778125 L 6.855673 0.958125 L 6.699788 1.048125 Z M 6.495190 0.806250 L 6.651074 1.076250 L 6.495190 1.166249 L 6.339305 1.076250 Z " />
+</g>
+<g id="0xffcbe122" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#cbe122">
+<path id="grid.hexagon.249" class="mesh2" fill-rule="evenodd" d="M 6.928203 1.950000 L 6.538491 1.725000 L 6.538491 1.274999 L 6.928203 1.049999 L 7.317914 1.274999 L 7.317914 1.725000 Z " />
+</g>
+<g id="0xffcee121" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#cee121">
+<path id="grid.hexagon.250" class="mesh2" fill-rule="evenodd" d="M 3.031088 -6.300000 L 2.641377 -6.525000 L 2.641377 -6.974999 L 3.031088 -7.199999 L 3.420800 -6.974999 L 3.420800 -6.525000 Z " />
+</g>
+<g id="0xffd0e11f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#d0e11f">
+<path id="grid.hexagon.251" class="mesh2" fill-rule="evenodd" d="M 3.415387 -5.971875 L 3.259503 -5.701875 L 3.103618 -5.791874 L 3.103618 -5.971875 Z M 3.415387 -6.028124 L 3.103618 -6.028124 L 3.103618 -6.208125 L 3.259503 -6.298124 Z M 3.464101 -6.056250 L 3.308217 -6.326249 L 3.464101 -6.416249 L 3.619986 -6.326249 Z M 3.512815 -6.028124 L 3.668699 -6.298124 L 3.824584 -6.208125 L 3.824584 -6.028124 Z M 3.512815 -5.971875 L 3.824584 -5.971875 L 3.824584 -5.791874 L 3.668699 -5.701875 Z M 3.464101 -5.943749 L 3.619986 -5.673750 L 3.464101 -5.583750 L 3.308217 -5.673750 Z " />
+</g>
+<g id="0xffd2e21d" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#d2e21d">
+<path id="grid.hexagon.252" class="mesh2" fill-rule="evenodd" d="M 3.897114 -4.800000 L 3.507402 -5.025000 L 3.507402 -5.474999 L 3.897114 -5.699999 L 4.286825 -5.474999 L 4.286825 -5.025000 Z " />
+</g>
+<g id="0xffd5e21e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#d5e21e">
+<path id="grid.hexagon.253" class="mesh2" fill-rule="evenodd" d="M 4.330126 -4.050000 L 3.940415 -4.275000 L 3.940415 -4.724999 L 4.330126 -4.949999 L 4.719838 -4.724999 L 4.719838 -4.275000 Z " />
+</g>
+<g id="0xffd7e21e" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#d7e21e">
+<path id="grid.hexagon.254" class="mesh2" fill-rule="evenodd" d="M 4.714426 -3.721874 L 4.558541 -3.451874 L 4.402656 -3.541875 L 4.402656 -3.721874 Z M 4.714426 -3.778124 L 4.402656 -3.778125 L 4.402656 -3.958124 L 4.558541 -4.048124 Z M 4.763139 -3.806249 L 4.607254 -4.076249 L 4.763139 -4.166249 L 4.919024 -4.076249 Z M 4.811853 -3.778124 L 4.967738 -4.048124 L 5.123622 -3.958124 L 5.123622 -3.778125 Z M 4.811853 -3.721874 L 5.123622 -3.721874 L 5.123622 -3.541875 L 4.967738 -3.451874 Z M 4.763139 -3.693749 L 4.919024 -3.423749 L 4.763139 -3.333750 L 4.607254 -3.423749 Z " />
+</g>
+<g id="0xffdae31f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#dae31f">
+<path id="grid.hexagon.255" class="mesh2" fill-rule="evenodd" d="M 5.196152 -2.549999 L 4.806440 -2.775000 L 4.806440 -3.224999 L 5.196152 -3.450000 L 5.585863 -3.224999 L 5.585863 -2.775000 Z " />
+</g>
+<g id="0xffdce31f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#dce31f">
+<path id="grid.hexagon.256" class="mesh2" fill-rule="evenodd" d="M 5.629165 -1.799999 L 5.239453 -2.025000 L 5.239453 -2.474999 L 5.629165 -2.700000 L 6.018876 -2.474999 L 6.018876 -2.025000 Z " />
+</g>
+<g id="0xffdfe31f" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#dfe31f">
+<path id="grid.hexagon.257" class="mesh2" fill-rule="evenodd" d="M 6.013463 -1.471874 L 5.857579 -1.201874 L 5.701694 -1.291875 L 5.701694 -1.471874 Z M 6.013463 -1.528125 L 5.701694 -1.528125 L 5.701694 -1.708125 L 5.857579 -1.798125 Z M 6.062177 -1.556250 L 5.906292 -1.826250 L 6.062177 -1.916250 L 6.218062 -1.826250 Z M 6.110891 -1.528125 L 6.266776 -1.798125 L 6.422660 -1.708125 L 6.422660 -1.528125 Z M 6.110891 -1.471874 L 6.422660 -1.471874 L 6.422660 -1.291875 L 6.266776 -1.201874 Z M 6.062177 -1.443750 L 6.218062 -1.173749 L 6.062177 -1.083750 L 5.906292 -1.173749 Z " />
+</g>
+<g id="0xffe1e420" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#e1e420">
+<path id="grid.hexagon.258" class="mesh2" fill-rule="evenodd" d="M 6.495190 -0.300000 L 6.105479 -0.525000 L 6.105479 -0.975000 L 6.495190 -1.200000 L 6.884902 -0.975000 L 6.884902 -0.525000 Z " />
+</g>
+<g id="0xffe3e420" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#e3e420">
+<path id="grid.hexagon.259" class="mesh2" fill-rule="evenodd" d="M 6.928203 0.450000 L 6.538491 0.225000 L 6.538491 -0.225000 L 6.928203 -0.450000 L 7.317914 -0.225000 L 7.317914 0.225000 Z " />
+</g>
+<g id="0xffe6e421" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#e6e421">
+<path id="grid.hexagon.260" class="mesh2" fill-rule="evenodd" d="M 7.312501 0.778125 L 7.156617 1.048125 L 7.000732 0.958125 L 7.000732 0.778125 Z M 7.312501 0.721875 L 7.000732 0.721875 L 7.000732 0.541874 L 7.156617 0.451874 Z M 7.361215 0.693750 L 7.205330 0.423750 L 7.361215 0.333750 L 7.517100 0.423750 Z M 7.409929 0.721875 L 7.565814 0.451874 L 7.721698 0.541874 L 7.721698 0.721875 Z M 7.409929 0.778125 L 7.721698 0.778125 L 7.721698 0.958125 L 7.565814 1.048125 Z M 7.361215 0.806250 L 7.517100 1.076250 L 7.361215 1.166249 L 7.205330 1.076250 Z " />
+</g>
+<g id="0xffe8e421" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#e8e421">
+<path id="grid.hexagon.261" class="mesh2" fill-rule="evenodd" d="M 3.897114 -6.300000 L 3.507402 -6.525000 L 3.507402 -6.974999 L 3.897114 -7.199999 L 4.286825 -6.974999 L 4.286825 -6.525000 Z " />
+</g>
+<g id="0xffeae522" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#eae522">
+<path id="grid.hexagon.262" class="mesh2" fill-rule="evenodd" d="M 4.330126 -5.550000 L 3.940415 -5.775000 L 3.940415 -6.224999 L 4.330126 -6.449999 L 4.719838 -6.224999 L 4.719838 -5.775000 Z " />
+</g>
+<g id="0xffede522" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#ede522">
+<path id="grid.hexagon.263" class="mesh2" fill-rule="evenodd" d="M 4.714426 -5.221875 L 4.558541 -4.951875 L 4.402656 -5.041874 L 4.402656 -5.221875 Z M 4.714426 -5.278124 L 4.402656 -5.278124 L 4.402656 -5.458125 L 4.558541 -5.548124 Z M 4.763139 -5.306250 L 4.607254 -5.576249 L 4.763139 -5.666249 L 4.919024 -5.576249 Z M 4.811853 -5.278124 L 4.967738 -5.548124 L 5.123622 -5.458125 L 5.123622 -5.278124 Z M 4.811853 -5.221875 L 5.123622 -5.221875 L 5.123622 -5.041874 L 4.967738 -4.951875 Z M 4.763139 -5.193749 L 4.919024 -4.923750 L 4.763139 -4.833750 L 4.607254 -4.923750 Z " />
+</g>
+<g id="0xffefe522" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#efe522">
+<path id="grid.hexagon.264" class="mesh2" fill-rule="evenodd" d="M 5.196152 -4.050000 L 4.806441 -4.275000 L 4.806441 -4.724999 L 5.196152 -4.949999 L 5.585864 -4.724999 L 5.585864 -4.275000 Z " />
+</g>
+<g id="0xfff1e623" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#f1e623">
+<path id="grid.hexagon.265" class="mesh2" fill-rule="evenodd" d="M 5.629165 -3.299999 L 5.239453 -3.525000 L 5.239453 -3.974999 L 5.629165 -4.199999 L 6.018876 -3.974999 L 6.018876 -3.525000 Z " />
+</g>
+<g id="0xfff4e623" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#f4e623">
+<path id="grid.hexagon.266" class="mesh2" fill-rule="evenodd" d="M 6.013463 -2.971874 L 5.857579 -2.701874 L 5.701694 -2.791875 L 5.701694 -2.971875 Z M 6.013463 -3.028124 L 5.701694 -3.028125 L 5.701694 -3.208124 L 5.857579 -3.298125 Z M 6.062177 -3.056249 L 5.906292 -3.326250 L 6.062177 -3.416249 L 6.218062 -3.326250 Z M 6.110891 -3.028124 L 6.266776 -3.298125 L 6.422660 -3.208124 L 6.422660 -3.028125 Z M 6.110891 -2.971874 L 6.422660 -2.971875 L 6.422660 -2.791875 L 6.266776 -2.701874 Z M 6.062177 -2.943749 L 6.218062 -2.673749 L 6.062177 -2.583750 L 5.906292 -2.673749 Z " />
+</g>
+<g id="0xfff6e624" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#f6e624">
+<path id="grid.hexagon.267" class="mesh2" fill-rule="evenodd" d="M 6.495190 -1.799999 L 6.105479 -2.025000 L 6.105479 -2.474999 L 6.495190 -2.700000 L 6.884902 -2.474999 L 6.884902 -2.025000 Z " />
+</g>
+<g id="0xfff8e624" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#f8e624">
+<path id="grid.hexagon.268" class="mesh2" fill-rule="evenodd" d="M 6.928203 -1.049999 L 6.538491 -1.274999 L 6.538491 -1.725000 L 6.928203 -1.950000 L 7.317914 -1.725000 L 7.317914 -1.274999 Z " />
+</g>
+<g id="0xfffbe725" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#fbe725">
+<path id="grid.hexagon.269" class="mesh2" fill-rule="evenodd" d="M 7.312502 -0.721875 L 7.156617 -0.451874 L 7.000732 -0.541874 L 7.000732 -0.721875 Z M 7.312502 -0.778125 L 7.000732 -0.778125 L 7.000732 -0.958125 L 7.156617 -1.048125 Z M 7.361216 -0.806250 L 7.205331 -1.076250 L 7.361216 -1.166249 L 7.517100 -1.076250 Z M 7.409930 -0.778125 L 7.565814 -1.048125 L 7.721699 -0.958125 L 7.721699 -0.778125 Z M 7.409930 -0.721875 L 7.721699 -0.721875 L 7.721699 -0.541874 L 7.565814 -0.451874 Z M 7.361216 -0.693750 L 7.517100 -0.423750 L 7.361216 -0.333750 L 7.205331 -0.423750 Z " />
+</g>
+<g id="0xfffde725" class="materialsolid" stroke-width="0.017895" stroke="#ffffff" stroke-linejoin="round" stroke-linecap="round" fill="#fde725">
+<path id="grid.hexagon.270" class="mesh2" fill-rule="evenodd" d="M 7.794228 0.450000 L 7.404517 0.225000 L 7.404517 -0.225000 L 7.794228 -0.450000 L 8.183939 -0.225000 L 8.183939 0.225000 Z " />
+</g>
+</g>
+
+</g>
+</svg>

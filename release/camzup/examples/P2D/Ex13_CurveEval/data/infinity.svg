@@ -1,0 +1,365 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
+<path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill-opacity="1.000000" fill="#101010"></path>
+<g id="camera" transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
+<g id="dot.00" class="curveentity2" transform="translate(168.136413, 35.677276) rotate(0.0) scale(25.000000, 25.000000)">
+<g id="0xffff0000" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff0000">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.01" class="curveentity2" transform="translate(155.668304, 27.908922) rotate(0.0) scale(24.957509, 24.957509)">
+<g id="0xffff1600" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff1600">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.02" class="curveentity2" transform="translate(137.413986, 19.199136) rotate(0.0) scale(24.830526, 24.830526)">
+<g id="0xffff2b00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff2b00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.03" class="curveentity2" transform="translate(118.380409, 12.605051) rotate(0.0) scale(24.620481, 24.620481)">
+<g id="0xffff4100" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff4100">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.04" class="curveentity2" transform="translate(98.683288, 7.812393) rotate(0.0) scale(24.329759, 24.329759)">
+<g id="0xffff5600" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff5600">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.05" class="curveentity2" transform="translate(78.438102, 4.506843) rotate(0.0) scale(23.961656, 23.961656)">
+<g id="0xffff6b00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff6b00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.06" class="curveentity2" transform="translate(57.761363, 2.374233) rotate(0.0) scale(23.520336, 23.520336)">
+<g id="0xffff7700" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff7700">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.07" class="curveentity2" transform="translate(36.767898, 1.100197) rotate(0.0) scale(23.010805, 23.010805)">
+<g id="0xffff8200" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff8200">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.08" class="curveentity2" transform="translate(15.574256, 0.370504) rotate(0.0) scale(22.438835, 22.438835)">
+<g id="0xffff8d00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff8d00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.09" class="curveentity2" transform="translate(-5.704116, -0.129129) rotate(0.0) scale(21.810907, 21.810907)">
+<g id="0xffff9900" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff9900">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.10" class="curveentity2" transform="translate(-26.951786, -0.712997) rotate(0.0) scale(21.134132, 21.134132)">
+<g id="0xffffa400" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffa400">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.11" class="curveentity2" transform="translate(-48.052204, -1.695350) rotate(0.0) scale(20.416179, 20.416179)">
+<g id="0xffffad00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffad00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.12" class="curveentity2" transform="translate(-68.890556, -3.390510) rotate(0.0) scale(19.665189, 19.665189)">
+<g id="0xffffb600" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffb600">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.13" class="curveentity2" transform="translate(-89.350296, -6.112696) rotate(0.0) scale(18.889663, 18.889663)">
+<g id="0xffffbf00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffbf00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.14" class="curveentity2" transform="translate(-109.315963, -10.176201) rotate(0.0) scale(18.098396, 18.098396)">
+<g id="0xffffc800" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffc800">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.15" class="curveentity2" transform="translate(-128.671844, -15.895303) rotate(0.0) scale(17.300346, 17.300346)">
+<g id="0xffffd200" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffd200">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.16" class="curveentity2" transform="translate(-147.302291, -23.584341) rotate(0.0) scale(16.504558, 16.504558)">
+<g id="0xffffdb00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffdb00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.17" class="curveentity2" transform="translate(-162.821502, -32.136394) rotate(0.0) scale(15.720049, 15.720049)">
+<g id="0xffffe500" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffe500">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.18" class="curveentity2" transform="translate(-174.014938, -40.040264) rotate(0.0) scale(14.955709, 14.955709)">
+<g id="0xffffef00" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ffef00">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.19" class="curveentity2" transform="translate(-184.204238, -48.900650) rotate(0.0) scale(14.220194, 14.220194)">
+<g id="0xfffff900" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#fff900">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.20" class="curveentity2" transform="translate(-193.328384, -58.596775) rotate(0.0) scale(13.521842, 13.521842)">
+<g id="0xfff5fc02" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#f5fc02">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.21" class="curveentity2" transform="translate(-201.326385, -69.007881) rotate(0.0) scale(12.868563, 12.868563)">
+<g id="0xffd7f308" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#d7f308">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.22" class="curveentity2" transform="translate(-208.137130, -80.013160) rotate(0.0) scale(12.267764, 12.267764)">
+<g id="0xffbceb0e" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#bceb0e">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.23" class="curveentity2" transform="translate(-213.699508, -91.491737) rotate(0.0) scale(11.726245, 11.726245)">
+<g id="0xffa3e213" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#a3e213">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.24" class="curveentity2" transform="translate(-217.952514, -103.322784) rotate(0.0) scale(11.250144, 11.250144)">
+<g id="0xff8dd917" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#8dd917">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.25" class="curveentity2" transform="translate(-220.835037, -115.385505) rotate(0.0) scale(10.844860, 10.844860)">
+<g id="0xff70d017" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#70d017">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.26" class="curveentity2" transform="translate(-222.286102, -127.559242) rotate(0.0) scale(10.514977, 10.514977)">
+<g id="0xff49c811" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#49c811">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.27" class="curveentity2" transform="translate(-222.244583, -139.723052) rotate(0.0) scale(10.264240, 10.264240)">
+<g id="0xff24bf0c" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#24bf0c">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.28" class="curveentity2" transform="translate(-220.649475, -151.755996) rotate(0.0) scale(10.095487, 10.095487)">
+<g id="0xff07b60e" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#07b60e">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.29" class="curveentity2" transform="translate(-217.439620, -163.537673) rotate(0.0) scale(10.010629, 10.010629)">
+<g id="0xff02ad27" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#02ad27">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.30" class="curveentity2" transform="translate(-212.554077, -174.946868) rotate(0.0) scale(10.010629, 10.010629)">
+<g id="0xff03a53b" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#03a53b">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.31" class="curveentity2" transform="translate(-205.931701, -185.862884) rotate(0.0) scale(10.095486, 10.095486)">
+<g id="0xff089e49" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#089e49">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.32" class="curveentity2" transform="translate(-197.511398, -196.165145) rotate(0.0) scale(10.264240, 10.264240)">
+<g id="0xff0c9654" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#0c9654">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.33" class="curveentity2" transform="translate(-187.498474, -205.490997) rotate(0.0) scale(10.514979, 10.514979)">
+<g id="0xff108f5d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#108f5d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.34" class="curveentity2" transform="translate(-176.777084, -213.024047) rotate(0.0) scale(10.844860, 10.844860)">
+<g id="0xff148764" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#148764">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.35" class="curveentity2" transform="translate(-165.528747, -218.765426) rotate(0.0) scale(11.250144, 11.250144)">
+<g id="0xff158874" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#158874">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.36" class="curveentity2" transform="translate(-153.872665, -222.779357) rotate(0.0) scale(11.726244, 11.726244)">
+<g id="0xff148f8d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#148f8d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.37" class="curveentity2" transform="translate(-141.927993, -225.129974) rotate(0.0) scale(12.267764, 12.267764)">
+<g id="0xff138396" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#138396">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.38" class="curveentity2" transform="translate(-129.813674, -225.881530) rotate(0.0) scale(12.868566, 12.868566)">
+<g id="0xff12739d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#12739d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.39" class="curveentity2" transform="translate(-117.649406, -225.098114) rotate(0.0) scale(13.521842, 13.521842)">
+<g id="0xff1160a4" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#1160a4">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.40" class="curveentity2" transform="translate(-105.554069, -222.843902) rotate(0.0) scale(14.220194, 14.220194)">
+<g id="0xff154da3" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#154da3">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.41" class="curveentity2" transform="translate(-93.646896, -219.183197) rotate(0.0) scale(14.955707, 14.955707)">
+<g id="0xff1a3d9f" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#1a3d9f">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.42" class="curveentity2" transform="translate(-82.047042, -214.180084) rotate(0.0) scale(15.720049, 15.720049)">
+<g id="0xff202f9b" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#202f9b">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.43" class="curveentity2" transform="translate(-70.873420, -207.898635) rotate(0.0) scale(16.504558, 16.504558)">
+<g id="0xff252497" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#252497">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.44" class="curveentity2" transform="translate(-60.245742, -200.403274) rotate(0.0) scale(17.300346, 17.300346)">
+<g id="0xff382993" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#382993">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.45" class="curveentity2" transform="translate(-50.282920, -191.758102) rotate(0.0) scale(18.098396, 18.098396)">
+<g id="0xff412590" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#412590">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.46" class="curveentity2" transform="translate(-41.104087, -182.027236) rotate(0.0) scale(18.889663, 18.889663)">
+<g id="0xff491f8d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#491f8d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.47" class="curveentity2" transform="translate(-32.828479, -171.274917) rotate(0.0) scale(19.665189, 19.665189)">
+<g id="0xff52188b" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#52188b">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.48" class="curveentity2" transform="translate(-25.575250, -159.565307) rotate(0.0) scale(20.416179, 20.416179)">
+<g id="0xff5c1288" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#5c1288">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.49" class="curveentity2" transform="translate(-17.084079, -141.623077) rotate(0.0) scale(21.134132, 21.134132)">
+<g id="0xff670d85" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#670d85">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.50" class="curveentity2" transform="translate(-10.585587, -122.560592) rotate(0.0) scale(21.810907, 21.810907)">
+<g id="0xff7d0a8b" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#7d0a8b">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.51" class="curveentity2" transform="translate(-5.968621, -102.860176) rotate(0.0) scale(22.438835, 22.438835)">
+<g id="0xff93088d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#93088d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.52" class="curveentity2" transform="translate(-2.915971, -82.629348) rotate(0.0) scale(23.010805, 23.010805)">
+<g id="0xff9a067e" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#9a067e">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.53" class="curveentity2" transform="translate(-1.110478, -61.975662) rotate(0.0) scale(23.520336, 23.520336)">
+<g id="0xffa2036c" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#a2036c">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.54" class="curveentity2" transform="translate(-0.234951, -41.006633) rotate(0.0) scale(23.961656, 23.961656)">
+<g id="0xffa90057" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#a90057">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.55" class="curveentity2" transform="translate(0.027762, -19.829357) rotate(0.0) scale(24.329759, 24.329759)">
+<g id="0xffba004c" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ba004c">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.56" class="curveentity2" transform="translate(-0.005130, 1.447673) rotate(0.0) scale(24.620481, 24.620481)">
+<g id="0xffcb003e" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#cb003e">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.57" class="curveentity2" transform="translate(-0.016461, 22.717391) rotate(0.0) scale(24.830526, 24.830526)">
+<g id="0xffdc002d" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#dc002d">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.58" class="curveentity2" transform="translate(0.310947, 43.872253) rotate(0.0) scale(24.957509, 24.957509)">
+<g id="0xffee0018" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ee0018">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+<g id="dot.59" class="curveentity2" transform="translate(1.294279, 64.804718) rotate(0.0) scale(25.000000, 25.000000)">
+<g id="0xffff0000" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#ff0000">
+<path id="circle" class="curve2" fill-rule="evenodd" d="M 0.500000 0.0 C 0.500000 0.276142,0.276142 0.500000,0.0 0.500000 C -0.276142 0.500000,-0.500000 0.276142,-0.500000 0.0 C -0.500000 -0.276142,-0.276142 -0.500000,0.0 -0.500000 C 0.276142 -0.500000,0.500000 -0.276142,0.500000 0.0 Z"></path>
+</g>
+</g>
+
+</g>
+</svg>
