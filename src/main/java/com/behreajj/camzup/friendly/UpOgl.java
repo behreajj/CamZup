@@ -2729,6 +2729,34 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     /**
+     * Sets the stroke join on the ends of strokes with a PConstant.
+     *
+     * @param join the constant
+     */
+    @Override
+    public void strokeJoin(final int join) {
+
+        /*
+         * Neither bevel nor miter are supported due to flickering. Round also
+         * flickers but there's not much choice left. See
+         * https://discourse.processing.org/t/drawing-a-flower-of-life-with-6-vesica-piscis/46341/
+         * https://github.com/processing/processing4/blob/main/core/src/processing/opengl/PGraphicsOpenGL.java#L13905
+         */
+
+        switch (join) {
+            case PConstants.MITER:
+                System.err.println("Miter stroke join not supported by this renderer.");
+                break;
+            case PConstants.BEVEL:
+                System.err.println("Bevel stroke join not supported by this renderer.");
+                break;
+            case PConstants.ROUND:
+            default:
+                this.strokeJoin = PConstants.ROUND; /* 2 */
+        }
+    }
+
+    /**
      * Exposes the OpenGL model view array to more direct access.
      *
      * @param m the matrix

@@ -3394,7 +3394,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
     /**
      * Sets the stroke join on the ends of strokes with a PConstant: BEVEL,
-     * MITER, and ROUND.
+     * MITER, or ROUND.
      *
      * @param join the constant
      * @see YupJ2#chooseStrokeJoin(int)

@@ -872,6 +872,9 @@ public class Lab implements IColor {
         final float step,
         final Lab target) {
 
+            // TODO: See experiments from AsepriteAddons.
+            // https://github.com/behreajj/AsepriteAddons/commit/a1aa5092b556bdef8ae59b08a0181de6972a91f9
+
         final float u = 1.0f - step;
         return target.set(
             u * orig.l + step * dest.l,
