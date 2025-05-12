@@ -426,12 +426,18 @@ public class Lch implements IColor {
             final double ud = 1.0d - step;
             final double ca = ud * oa + step * da;
             final double cb = ud * ob + step * db;
-
             final double cc = Math.sqrt(ca * ca + cb * cb);
 
-            double ch = Math.atan2(cb, ca);
-            ch = ch < -0.0d ? ch + Utils.TAU_D : ch;
-            ch *= Utils.ONE_TAU_2_D;
+            double ch;
+            if(cc < Utils.EPSILON) {
+                final float lt = cl * 0.01f;
+                ch = Utils.mod1((1.0f - lt) * Lch.SR_HUE_SHADE
+                    + lt * (Lch.SR_HUE_LIGHT + 1.0f));
+            } else {
+                ch = Math.atan2(cb, ca);
+                ch = ch < -0.0d ? ch + Utils.TAU_D : ch;
+                ch *= Utils.ONE_TAU_2_D;
+            }
 
             return target.set(cl, (float) cc, (float) ch, calpha);
         }

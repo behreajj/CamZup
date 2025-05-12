@@ -820,9 +820,17 @@ public class Lab implements IColor {
      */
     public static float hue(final Lab o) {
 
-        // TODO: Return a hue shadow or light if chroma is zero?
+        final double ad = o.a;
+        final double bd = o.b;
+        final double chromasq = ad * ad + bd * bd;
 
-        final double hueSigned = Math.atan2(o.b, o.a);
+        if (chromasq < Utils.EPSILON) {
+            final float t = o.l * 0.01f;
+            return Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE
+                + t * (Lch.SR_HUE_LIGHT + 1.0f));
+        }
+
+        final double hueSigned = Math.atan2(bd, ad);
         final double hueUnsigned = hueSigned < 0.0d
             ? hueSigned + Utils.TAU_D
             : hueSigned;
