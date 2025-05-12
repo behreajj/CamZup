@@ -873,30 +873,12 @@ public class Lab implements IColor {
         final float step,
         final Lab target) {
 
-        // TODO: Test this with a Hable tone map to see if the results
-        // are any better.
-
-        final boolean oIsExtreme = orig.l <= Utils.EPSILON
-            || orig.l >= 100.0f - Utils.EPSILON;
-        final boolean dIsExtreme = dest.l <= Utils.EPSILON
-            || dest.l >= 100.0f - Utils.EPSILON;
-
         final float u = 1.0f - step;
-        final float lMix = u * orig.l + step * dest.l;
-        final float alphaMix = u * orig.alpha + step * dest.alpha;
-
-        if (oIsExtreme && dIsExtreme) {
-            return target.set(lMix, 0.0f, 0.0f, alphaMix);
-        } else if (oIsExtreme) {
-            return target.set(lMix, dest.a, dest.b, alphaMix);
-        } else if (dIsExtreme) {
-            return target.set(lMix, orig.a, orig.b, alphaMix);
-        }
         return target.set(
-            lMix,
+            u * orig.l + step * dest.l,
             u * orig.a + step * dest.a,
             u * orig.b + step * dest.b,
-            alphaMix);
+            u * orig.alpha + step * dest.alpha);
     }
 
     /**
