@@ -1311,9 +1311,13 @@ public class Img {
             final double t = labOver.alpha;
             final double v = labUnder.alpha;
             final double u = 1.0d - t;
-            double tuv = t + u * v;
+            double tuv = v;
 
             switch (bmAlpha) {
+                case BLEND: {
+                    tuv = t + u * v;
+                }
+                break;
                 case MAX: {
                     tuv = Math.max(t, v);
                 }
@@ -1334,7 +1338,6 @@ public class Img {
                     tuv = v;
                 }
                 break;
-                case BLEND:
                 default:
             }
 
@@ -1359,9 +1362,9 @@ public class Img {
                 final double uAUnder = u * aUnder;
                 final double uBUnder = u * bUnder;
 
-                double lComp = uLUnder + t * lOver;
-                double aComp = uAUnder + t * aOver;
-                double bComp = uBUnder + t * bOver;
+                double lComp = uLUnder;
+                double aComp = uAUnder;
+                double bComp = uBUnder;
 
                 switch (bmLight) {
                     case ADD: {
@@ -1375,6 +1378,11 @@ public class Img {
                         if (vgt0) {
                             lComp = uLUnder + t * ((lUnder + lOver) * 0.5d);
                         }
+                    }
+                    break;
+
+                    case BLEND: {
+                        lComp = uLUnder + t * lOver;
                     }
                     break;
 
@@ -1447,7 +1455,6 @@ public class Img {
                     }
                     break;
 
-                    case BLEND:
                     default:
                 } /* End light blend mode. */
 
@@ -1468,6 +1475,12 @@ public class Img {
                     }
                     break;
 
+                    case BLEND: {
+                        aComp = uAUnder + t * aOver;
+                        bComp = uBUnder + t * bOver;
+                    }
+                    break;
+
                     case CHROMA: {
                         if (vgt0 && tgt0) {
                             final double csqUnder = aUnder * aUnder + bUnder * bUnder;
@@ -1481,7 +1494,7 @@ public class Img {
                                 aComp = uAUnder;
                                 bComp = uBUnder;
                             } /* End chroma under is greater than zero. */
-                        } /* End under alpha is greater than zero. */
+                        } /* End alpha is greater than zero. */
                     }
                     break;
 
@@ -1498,7 +1511,7 @@ public class Img {
                                 aComp = uAUnder;
                                 bComp = uBUnder;
                             } /* End chroma over is greater than zero. */
-                        } /* End under alpha is greater than zero. */
+                        } /* End alpha is greater than zero. */
                     }
                     break;
 
@@ -1530,7 +1543,6 @@ public class Img {
                     }
                     break;
 
-                    case BLEND:
                     default:
                 } /* End ab blend mode. */
 
@@ -2037,8 +2049,8 @@ public class Img {
     }
 
     /**
-     * Flips the pixels source image vertically, on the y axis, and stores the
-     * result in the target image.
+     * Flips the pixels source image horizontally, on the x axis, and stores
+     * the result in the target image.
      *
      * @param source the input image
      * @param target the output image
@@ -2202,7 +2214,11 @@ public class Img {
      * @param target the output image
      * @return the region
      */
-    public static Img getRegion(final Img source, final Bounds2 bounds, final Img target) {
+    public static Img getRegion(
+        final Img source,
+        final Bounds2 bounds,
+        final Img target) {
+
         return Img.getRegion(source, bounds.min, bounds.max, target);
     }
 
@@ -2216,7 +2232,11 @@ public class Img {
      * @param target the output image
      * @return the region
      */
-    public static Img getRegion(final Img source, final Vec2 mn, final Vec2 mx, final Img target) {
+    public static Img getRegion(
+        final Img source,
+        final Vec2 mn,
+        final Vec2 mx,
+        final Img target) {
 
         final int wSrc = source.width;
         final int hSrc = source.height;
@@ -2298,6 +2318,7 @@ public class Img {
      * @return the image sequence
      */
     public static Img[] gradientFrames(final Gradient grd, final Img[] seq) {
+
         return Img.gradientFrames(grd, new Lab.MixLab(), seq);
     }
 
@@ -2853,7 +2874,8 @@ public class Img {
         final float yOrig,
         final Img target) {
 
-        return Img.gradientSweep(grd, xOrig, yOrig, Utils.HALF_PI, new Lab.MixLab(), target);
+        return Img.gradientSweep(grd, xOrig, yOrig, Utils.HALF_PI,
+            new Lab.MixLab(), target);
     }
 
     /**
@@ -2874,7 +2896,8 @@ public class Img {
         final float angle,
         final Img target) {
 
-        return Img.gradientSweep(grd, orig.x, orig.y, angle, new Lab.MixLab(), target);
+        return Img.gradientSweep(grd, orig.x, orig.y, angle,
+            new Lab.MixLab(), target);
     }
 
     /**
@@ -3112,16 +3135,19 @@ public class Img {
 
         final int trgLen = target.pixels.length;
         if (dxZero && dyZero) {
-            System.arraycopy(source.pixels, 0, target.pixels, 0, Math.min(srcLen, trgLen));
+            System.arraycopy(source.pixels, 0, target.pixels, 0,
+                Math.min(srcLen, trgLen));
             return target;
         }
 
         if (dxZero) {
-            return Img.mirrorX(source, Utils.round(bx), flip ? ay > by : by > ay, target);
+            return Img.mirrorX(source, Utils.round(bx),
+                flip ? ay > by : by > ay, target);
         }
 
         if (dyZero) {
-            return Img.mirrorY(source, Utils.round(by), flip ? bx > ax : ax > bx, target);
+            return Img.mirrorY(source, Utils.round(by),
+                flip ? bx > ax : ax > bx, target);
         }
 
         final float dMagSqInv = 1.0f / (dx * dx + dy * dy);
@@ -3150,7 +3176,10 @@ public class Img {
                  * Default to omitting pixels that are out-of-bounds, rather
                  * than wrapping with floor modulo or clamping.
                  */
-                if (pyOpp >= 0.0f && pyOpp <= hfn1 && pxOpp >= 0.0f && pxOpp <= wfn1) {
+                if (pyOpp >= 0.0f
+                    && pyOpp <= hfn1
+                    && pxOpp >= 0.0f
+                    && pxOpp <= wfn1) {
                     target.pixels[k] = Img.sampleBilinear(source, pxOpp, pyOpp);
                 } else {
                     target.pixels[k] = Img.CLEAR_PIXEL;

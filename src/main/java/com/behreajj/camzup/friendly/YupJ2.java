@@ -1324,7 +1324,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
         for (int k = 0; k < lastsq; ++k) {
-            final double iPercent = (float) (k / last) * toPercent;
+            final double iPercent = (double) (k / last) * toPercent;
             final double jPercent = k % last * toPercent;
             final double x = (1.0d - jPercent) * left + jPercent * dimdh;
             final double y = (1.0d - iPercent) * bottom + iPercent * dimdh;
@@ -1816,9 +1816,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param uBr  sample bottom-right corner x
      * @param vBr  sample bottom-right corner y
      */
-    public void imageImpl(final PImage pimg, final int x0, final int y0,
-        final int x1, final int y1, final int uTl, final int vTl, final int uBr,
-        final int vBr) {
+    public void imageImpl(
+        final PImage pimg,
+        final int x0, final int y0,
+        final int x1, final int y1,
+        final int uTl, final int vTl,
+        final int uBr, final int vBr) {
 
         if (pimg.pixelWidth > 0 && pimg.pixelHeight > 0) {
             final int pd = pimg.pixelDensity;
@@ -2088,8 +2091,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param yDest the destination y
      */
     @Override
-    public void line(final float xOrig, final float yOrig, final float xDest,
-        final float yDest) {
+    public void line(
+        final float xOrig, final float yOrig,
+        final float xDest, final float yDest) {
 
         /*
          * It doesn't make sense why turning off the stroke would also turn off
@@ -2310,7 +2314,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          */
         if (this.stroke) {
 
-            /* Processing SQUARE is AWT BUTT; PROJECT is AWT SQUARE. */
+            /* Processing SQUARE is AWT BUTT. PROJECT is AWT SQUARE. */
             if (this.capNative == BasicStroke.CAP_BUTT) {
 
                 // noinspection MagicConstant
@@ -2905,7 +2909,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param material    the material
      * @param windingRule the winding rule
      */
-    public void shape(final CurveEntity2 entity, final MaterialAwt material,
+    public void shape(
+        final CurveEntity2 entity,
+        final MaterialAwt material,
         final int windingRule) {
 
         final Bounds2 bounds = new Bounds2();
@@ -2937,7 +2943,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param entity    the curve entity
      * @param materials the materials array
      */
-    public void shape(final CurveEntity2 entity,
+    public void shape(
+        final CurveEntity2 entity,
         final MaterialAwt[] materials) {
 
         this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
@@ -2952,7 +2959,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param windingRule the winding rule
      * @see Curve2#calcBounds(Curve2, Bounds2)
      */
-    public void shape(final CurveEntity2 entity, final MaterialAwt[] materials,
+    public void shape(
+        final CurveEntity2 entity,
+        final MaterialAwt[] materials,
         final int windingRule) {
 
         // TEST
@@ -2994,7 +3003,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param entity   the curve entity
      * @param material the material
      */
-    public void shape(final CurveEntity2 entity,
+    public void shape(
+        final CurveEntity2 entity,
         final MaterialSolid material) {
 
         this.shape(entity, material, YupJ2.DEFAULT_WINDING_RULE);
@@ -3008,7 +3018,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param material    the material
      * @param windingRule the winding rule
      */
-    public void shape(final CurveEntity2 entity, final MaterialSolid material,
+    public void shape(
+        final CurveEntity2 entity,
+        final MaterialSolid material,
         final int windingRule) {
 
         super.pushStyle();
@@ -3023,7 +3035,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param entity    the curve entity
      * @param materials an array of materials
      */
-    public void shape(final CurveEntity2 entity,
+    public void shape(
+        final CurveEntity2 entity,
         final MaterialSolid[] materials) {
 
         this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
@@ -3239,8 +3252,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param materials   the materials array
      * @param windingRule the winding rule
      */
-    public void shape(final MeshEntity2 entity,
-        final MaterialSolid[] materials, final int windingRule) {
+    public void shape(
+        final MeshEntity2 entity,
+        final MaterialSolid[] materials,
+        final int windingRule) {
 
         final Vec2 v = new Vec2();
         final Transform2 tr = entity.transform;
@@ -3303,7 +3318,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     }
 
     /**
-     * shapeMode is not supported by this renderer; it defaults to CENTER. Set
+     * shapeMode is not supported by this renderer. It defaults to CENTER. Set
      * the scale of the shape with instance methods instead.
      * <br>
      * <br>
@@ -3698,7 +3713,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      */
     @Override
     public void tint(final float gray, final float alpha) {
-
         /* Unsupported. */
     }
 
@@ -3711,7 +3725,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      */
     @Override
     public void tint(final float v1, final float v2, final float v3) {
-
         /* Unsupported. */
     }
 
@@ -3726,7 +3739,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     @Override
     public void tint(final float v1, final float v2, final float v3,
         final float alpha) {
-
         /* Unsupported. */
     }
 
@@ -3976,8 +3988,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @see Transform2#mulCurveSeg(Transform2, Vec2, Vec2, Vec2, Vec2, Vec2,
      * Vec2)
      */
-    protected void appendToGeneralPath(final Curve2 curve, final Transform2 tr,
-        final Vec2 fh, final Vec2 rh, final Vec2 co) {
+    protected void appendToGeneralPath(
+        final Curve2 curve,
+        final Transform2 tr,
+        final Vec2 fh,
+        final Vec2 rh,
+        final Vec2 co) {
 
         final Iterator<Knot2> itr = curve.iterator();
 
@@ -4012,7 +4028,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param v    the vector
      * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
      */
-    protected void appendToGeneralPath(final Mesh2 mesh, final Transform2 tr,
+    protected void appendToGeneralPath(
+        final Mesh2 mesh,
+        final Transform2 tr,
         final Vec2 v) {
 
         final Vec2[] coords = mesh.coords;

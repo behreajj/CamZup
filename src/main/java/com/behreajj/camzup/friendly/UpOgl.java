@@ -632,10 +632,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param z4 control point 1 z
      */
     @Override
-    public void curve(final float x1, final float y1, final float z1,
-        final float x2, final float y2, final float z2, final float x3,
-        final float y3, final float z3, final float x4, final float y4,
-        final float z4) {
+    public void curve(
+        final float x1, final float y1, final float z1,
+        final float x2, final float y2, final float z2,
+        final float x3, final float y3, final float z3,
+        final float x4, final float y4, final float z4) {
 
         this.beginShape(PConstants.POLYGON);
         this.curveVertexImpl(x1, y1, z1);
@@ -1531,15 +1532,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     /**
      * Eases from an origin color to a destination by a step.
      *
-     * @param origin the origin color
-     * @param dest   the destination color
-     * @param step   the factor in [0, 1]
+     * @param orig the origin color
+     * @param dest the destination color
+     * @param step the factor in [0, 1]
      * @return the color
      */
     @Override
-    public int lerpColor(final int origin, final int dest, final float step) {
+    public int lerpColor(final int orig, final int dest, final float step) {
 
-        return ColorAux.lerpColor(origin, dest, step, this.colorMode);
+        return ColorAux.lerpColor(orig, dest, step, this.colorMode);
     }
 
     /**
@@ -3099,10 +3100,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param u2       the image bottom-right corner u
      * @param v2       the image bottom-right corner v
      */
-    void imageCenter(final PImage img, final float xCenter,
-        final float yCenter, final float wDisplay, final float hDisplay,
-        final float z, final float u1, final float v1, final float u2,
-        final float v2) {
+    void imageCenter(
+        final PImage img,
+        final float xCenter, final float yCenter,
+        final float wDisplay, final float hDisplay,
+        final float z,
+        final float u1, final float v1,
+        final float u2, final float v2) {
 
         if (img.width < 1 || img.height < 1) {
             return;
@@ -3147,9 +3151,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param u2       the image bottom-right corner u
      * @param v2       the image bottom-right corner v
      */
-    void imageCorner(final PImage img, final float xtl, final float ytl,
-        final float wDisplay, final float hDisplay, final float z, final float u1,
-        final float v1, final float u2, final float v2) {
+    void imageCorner(
+        final PImage img,
+        final float xtl, final float ytl,
+        final float wDisplay, final float hDisplay,
+        final float z,
+        final float u1, final float v1,
+        final float u2, final float v2) {
 
         if (img.width < 1 || img.height < 1) {
             return;
@@ -3190,9 +3198,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param u2  the image bottom-right corner u
      * @param v2  the image bottom-right corner v
      */
-    void imageCorners(final PImage img, final float x1, final float y1,
-        final float x2, final float y2, final float z, final float u1,
-        final float v1, final float u2, final float v2) {
+    void imageCorners(
+        final PImage img,
+        final float x1, final float y1,
+        final float x2, final float y2,
+        final float z,
+        final float u1, final float v1,
+        final float u2, final float v2) {
 
         if (img.width < 1 || img.height < 1) {
             return;
@@ -3235,10 +3247,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param u2       the image bottom-right corner u
      * @param v2       the image bottom-right corner v
      */
-    void imageRadius(final PImage img, final float xCenter,
-        final float yCenter, final float wDisplay, final float hDisplay,
-        final float z, final float u1, final float v1, final float u2,
-        final float v2) {
+    void imageRadius(
+        final PImage img,
+        final float xCenter, final float yCenter,
+        final float wDisplay, final float hDisplay,
+        final float z,
+        final float u1, final float v1,
+        final float u2, final float v2) {
 
         if (img.width < 1 || img.height < 1) {
             return;
@@ -3286,11 +3301,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param n33 row 3, column 3
      */
     @Override
-    protected void applyMatrixImpl(final float n00, final float n01,
-        final float n02, final float n03, final float n10, final float n11,
-        final float n12, final float n13, final float n20, final float n21,
-        final float n22, final float n23, final float n30, final float n31,
-        final float n32, final float n33) {
+    protected void applyMatrixImpl(
+        final float n00, final float n01, final float n02, final float n03,
+        final float n10, final float n11, final float n12, final float n13,
+        final float n20, final float n21, final float n22, final float n23,
+        final float n30, final float n31, final float n32, final float n33) {
 
         this.modelview.apply(
             n00, n01, n02, n03,
@@ -3594,8 +3609,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
      * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
      */
-    protected void drawMesh2(final Mesh2 mesh, final Transform2 tr,
-        final MaterialPImage mat, final Vec2 v, final Vec2 vt) {
+    protected void drawMesh2(
+        final Mesh2 mesh,
+        final Transform2 tr,
+        final MaterialPImage mat,
+        final Vec2 v,
+        final Vec2 vt) {
 
         final PImage pimg = mat.texture;
         final Transform2 uvtr = mat.transform;
@@ -3627,7 +3646,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param v    a temporary vector
      * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
      */
-    protected void drawMesh2(final Mesh2 mesh, final Transform2 tr,
+    protected void drawMesh2(
+        final Mesh2 mesh,
+        final Transform2 tr,
         final Vec2 v) {
 
         final Vec2[] vs = mesh.coords;
@@ -3656,8 +3677,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param vn   a temporary vector
      * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
      */
-    protected void drawMesh3(final Mesh3 mesh, final Transform3 tr,
-        final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn) {
+    protected void drawMesh3(
+        final Mesh3 mesh,
+        final Transform3 tr,
+        final MaterialPImage mat,
+        final Vec3 v,
+        final Vec2 vt,
+        final Vec3 vn) {
 
         final PImage pimg = mat.texture;
         final Transform2 uvtr = mat.transform;
@@ -3697,8 +3723,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param v    a temporary vector
      * @param vn   a temporary vector
      */
-    protected void drawMesh3(final Mesh3 mesh, final Transform3 tr,
-        final Vec3 v, final Vec3 vn) {
+    protected void drawMesh3(
+        final Mesh3 mesh,
+        final Transform3 tr,
+        final Vec3 v,
+        final Vec3 vn) {
 
         final Vec3[] vs = mesh.coords;
         final Vec3[] vns = mesh.normals;
@@ -3760,9 +3789,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param v2  the image bottom-right corner v
      */
     @Override
-    protected void imageImpl(final PImage img, final float x1, final float y1,
-        final float x2, final float y2, final int u1, final int v1, final int u2,
-        final int v2) {
+    protected void imageImpl(
+        final PImage img,
+        final float x1, final float y1,
+        final float x2, final float y2,
+        final int u1, final int v1,
+        final int u2, final int v2) {
 
         /*
          * This is backwards due to Processing's insistence on specifying UV
@@ -4604,8 +4636,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         if (glyph != null) {
 
             /*
-             * Hack to deal with blending modes. The "correct" blend causes
-             * backgrounds to appear on text; the default is the old blend mode.
+             * Hack to deal with blending modes. A premultiplied blend causes
+             * backgrounds to appear on text. The default is the old blend mode.
              */
             final int oldBlendMode = this.blendMode;
             this.blendMode = IUpOgl.TEXT_BLEND;

@@ -168,7 +168,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final Curve2 target) {
 
         // TODO: Refactor to create separate, protected arc methods, then call
-        // them from this method based on arc mode.
+        // them from this method based on arc mode. First attempt had issues
+        // with pie arc mode creating straight edge legs from wrong point.
 
         /*
          * Optimized where possible because Yup2 renderer uses this to display

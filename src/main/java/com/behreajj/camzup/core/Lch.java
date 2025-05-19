@@ -429,7 +429,7 @@ public class Lch implements IColor {
             final double cc = Math.sqrt(ca * ca + cb * cb);
 
             double ch;
-            if(cc < Utils.EPSILON) {
+            if (cc < Utils.EPSILON) {
                 final float lt = cl * 0.01f;
                 ch = Utils.mod1((1.0f - lt) * Lch.SR_HUE_SHADE
                     + lt * (Lch.SR_HUE_LIGHT + 1.0f));
@@ -863,7 +863,6 @@ public class Lch implements IColor {
         public Lch[] apply(final Lch o) {
 
             final float lCmp = 100.0f - o.l;
-
             final float h180 = o.h + 0.5f;
 
             return new Lch[]{new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha)};
@@ -892,7 +891,6 @@ public class Lch implements IColor {
         public Lch[] apply(final Lch o) {
 
             final float lSpl = (250.0f - o.l * 2.0f) / 3.0f;
-
             final float h150 = o.h + 0.41666667f;
             final float h210 = o.h - 0.41666667f;
 
@@ -925,7 +923,6 @@ public class Lch implements IColor {
         public Lch[] apply(final Lch o) {
 
             final float lCmp = 100.0f - o.l;
-
             final float h90 = o.h + 0.25f;
             final float h180 = o.h + 0.5f;
             final float h270 = o.h - 0.25f;
@@ -962,7 +959,6 @@ public class Lch implements IColor {
             final float lTri = (200.0f - o.l) / 3.0f;
             final float lCmp = 100.0f - o.l;
             final float lTet = (100.0f + o.l) / 3.0f;
-
             final float h120 = o.h + Utils.ONE_THIRD;
             final float h180 = o.h + 0.5f;
             final float h300 = o.h - Utils.ONE_SIX;
@@ -997,7 +993,6 @@ public class Lch implements IColor {
         public Lch[] apply(final Lch o) {
 
             final float lTri = (200.0f - o.l) / 3.0f;
-
             final float h120 = o.h + Utils.ONE_THIRD;
             final float h240 = o.h - Utils.ONE_THIRD;
 
